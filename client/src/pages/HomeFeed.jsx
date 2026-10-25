@@ -1,0 +1,248 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {
+  Search,
+  Filter,
+  PlusCircle,
+  RefreshCw,
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import api from '../services/api';
+import { PostCard } from '../components/PostCard';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { EmptyState } from '../components/EmptyState';
+
+export const HomeFeed = () => {
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, totalPosts: 0 });
+
+  // Filters from URL or default
+  const selectedType = searchParams.get('type') || '';
+  const searchInput = searchParams.get('search') || '';
+  const selectedSort = searchParams.get('sort') || 'newest';
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  const [localSearch, setLocalSearch] = useState(searchInput);
+
+  const fetchFeed = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      if (selectedType) params.append('type', selectedType);
+      if (searchInput) params.append('search', searchInput);
+      if (selectedSort) params.append('sort', selectedSort);
+      params.append('page', currentPage.toString());
+      params.append('limit', '12');
+
+      const res = await api.get(`/posts?${params.toString()}`);
+      if (res.success) {
+        setPosts(res.data || []);
+        if (res.pagination) {
+          setPagination(res.pagination);
+        }
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load campus feed. Please retry.');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedType, searchInput, selectedSort, currentPage]);
+
+  useEffect(() => {
+    fetchFeed();
+  }, [fetchFeed]);
+
+  const updateFilter = (key, value) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    newParams.set('page', '1'); // reset page on filter change
+    setSearchParams(newParams);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    updateFilter('search', localSearch.trim());
+  };
+
+  return (
+    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
+      {/* Top Banner & Greetings */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+          borderRadius: 'var(--radius-xl)',
+          padding: '2.25rem 2rem',
+          color: '#ffffff',
+          marginBottom: '2rem',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1.5rem',
+          boxShadow: 'var(--shadow-lg)',
+        }}
+      >
+        <div>
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#c7d2fe', letterSpacing: '0.05em' }}>
+            Campus Live Feed
+          </span>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
+            {user ? `Welcome back, ${user.name.split(' ')[0]}!` : 'CampusConnect Community Feed'}
+          </h1>
+          <p style={{ color: '#e0e7ff', fontSize: '0.95rem', marginTop: '0.4rem' }}>
+            Check out what students at Apex Institute are sharing, searching for, and collaborating on right now.
+          </p>
+        </div>
+
+        <Link to="/create-post" className="btn btn-lg" style={{ background: '#ffffff', color: 'var(--primary)', fontWeight: 700, boxShadow: 'var(--shadow-md)' }}>
+          <PlusCircle size={20} />
+          <span>Publish New Listing</span>
+        </Link>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div
+        style={{
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '1.25rem',
+          marginBottom: '2rem',
+          boxShadow: 'var(--shadow-sm)',
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Post Type Tabs */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <button
+              onClick={() => updateFilter('type', '')}
+              className={`btn btn-sm ${!selectedType ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              All Listings
+            </button>
+            <button
+              onClick={() => updateFilter('type', 'LOST_FOUND')}
+              className={`btn btn-sm ${selectedType === 'LOST_FOUND' ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              Lost & Found
+            </button>
+            <button
+              onClick={() => updateFilter('type', 'MARKETPLACE')}
+              className={`btn btn-sm ${selectedType === 'MARKETPLACE' ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              Marketplace
+            </button>
+            <button
+              onClick={() => updateFilter('type', 'COLLABORATION')}
+              className={`btn btn-sm ${selectedType === 'COLLABORATION' ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              Collaboration
+            </button>
+          </div>
+
+          {/* Search Input & Sort Dropdown */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
+              <Search size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+              <input
+                type="text"
+                placeholder="Search listings..."
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.875rem', width: '160px' }}
+              />
+            </form>
+
+            <select
+              value={selectedSort}
+              onChange={(e) => updateFilter('sort', e.target.value)}
+              className="form-control"
+              style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+            </select>
+
+            <button
+              onClick={fetchFeed}
+              title="Refresh Feed"
+              className="btn btn-secondary btn-sm"
+              style={{ padding: '0.5rem' }}
+            >
+              <RefreshCw size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Error state */}
+      {error && (
+        <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #fecaca' }}>
+          <span>{error}</span>
+          <button onClick={fetchFeed} className="btn btn-danger btn-sm">Retry</button>
+        </div>
+      )}
+
+      {/* Grid of Listings */}
+      {loading ? (
+        <LoadingSkeleton count={6} />
+      ) : posts.length > 0 ? (
+        <>
+          <div className="grid-cards">
+            {posts.map((post) => (
+              <PostCard key={post._id} post={post} />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {pagination.totalPages > 1 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginTop: '3rem' }}>
+              <button
+                disabled={!pagination.hasPrevPage}
+                onClick={() => updateFilter('page', (currentPage - 1).toString())}
+                className="btn btn-secondary btn-sm"
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+              <button
+                disabled={!pagination.hasNextPage}
+                onClick={() => updateFilter('page', (currentPage + 1).toString())}
+                className="btn btn-secondary btn-sm"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <EmptyState
+          title="No posts found matching your criteria"
+          description="Try clearing your search query or switching to another category tab."
+          actionText="Create New Listing"
+          actionLink="/create-post"
+        />
+      )}
+    </div>
+  );
+};
