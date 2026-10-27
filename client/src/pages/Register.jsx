@@ -14,6 +14,25 @@ export const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  const getDepartmentOptions = (selectedYear) => {
+    if (selectedYear === '1st Year') {
+      return [
+        { value: 'Computer Science & Engineering', label: 'Computer Science & Engineering (CSE)' },
+        { value: 'Business & AI', label: 'Business & AI' },
+      ];
+    }
+    return [
+      { value: 'Computer Science & Engineering', label: 'Computer Science & Engineering (CSE)' },
+    ];
+  };
+
+  const handleYearChange = (newYear) => {
+    setYear(newYear);
+    if (newYear !== '1st Year' && department !== 'Computer Science & Engineering') {
+      setDepartment('Computer Science & Engineering');
+    }
+  };
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -151,34 +170,31 @@ export const Register = () => {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
-              <label className="form-label">Department</label>
-              <select
-                className="form-control"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-              >
-                <option value="Computer Science & Engineering">Computer Science & Eng</option>
-                <option value="Electronics & Communication">Electronics & Comm</option>
-                <option value="Mechanical Engineering">Mechanical Engineering</option>
-                <option value="Electrical Engineering">Electrical Engineering</option>
-                <option value="Civil Engineering">Civil Engineering</option>
-                <option value="Biotechnology">Biotechnology</option>
-                <option value="Management Studies">Management Studies</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Year of Study</label>
+              <label className="form-label">Year of Study *</label>
               <select
                 className="form-control"
                 value={year}
-                onChange={(e) => setYear(e.target.value)}
+                onChange={(e) => handleYearChange(e.target.value)}
               >
                 <option value="1st Year">1st Year</option>
                 <option value="2nd Year">2nd Year</option>
                 <option value="3rd Year">3rd Year</option>
                 <option value="4th Year">4th Year</option>
-                <option value="Postgraduate">Postgraduate</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Department *</label>
+              <select
+                className="form-control"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+              >
+                {getDepartmentOptions(year).map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
