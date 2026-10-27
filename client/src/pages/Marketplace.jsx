@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingBag, Plus, SlidersHorizontal, CircleAlert } from 'lucide-react';
+import { Search, ShoppingBag, Plus, SlidersHorizontal, CircleAlert, X } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -121,15 +121,38 @@ export const Marketplace = () => {
 
           {/* Search & Sort */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
+            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)', gap: '0.35rem' }}>
+              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ flexShrink: 0 }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search items..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.875rem', width: '160px' }}
+                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.875rem', width: '150px' }}
               />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  title="Clear search"
+                  aria-label="Clear search"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0 0.15rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 1,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-main)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                >
+                  <X size={14} strokeWidth={2} />
+                </button>
+              )}
             </div>
 
             <select

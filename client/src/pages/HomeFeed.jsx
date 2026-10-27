@@ -8,6 +8,7 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
@@ -30,6 +31,11 @@ export const HomeFeed = () => {
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   const [localSearch, setLocalSearch] = useState(searchInput);
+
+  // Keep local search synchronized with URL search parameter
+  useEffect(() => {
+    setLocalSearch(searchInput);
+  }, [searchInput]);
 
   const fetchFeed = useCallback(async () => {
     try {
@@ -70,6 +76,20 @@ export const HomeFeed = () => {
     }
     newParams.set('page', '1'); // reset page on filter change
     setSearchParams(newParams);
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setLocalSearch(val);
+    // If user deleted all characters or cleared the field, immediately reset search filter
+    if (!val.trim()) {
+      updateFilter('search', '');
+    }
+  };
+
+  const handleClearSearch = () => {
+    setLocalSearch('');
+    updateFilter('search', '');
   };
 
   const handleSearchSubmit = (e) => {
@@ -138,15 +158,38 @@ export const HomeFeed = () => {
 
           {/* Search Input & Sort Dropdown */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
-            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
+            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)', gap: '0.35rem' }}>
+              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ flexShrink: 0 }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search listings..."
                 value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.875rem', width: '160px' }}
+                onChange={handleSearchChange}
+                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.875rem', width: '150px' }}
               />
+              {localSearch && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  title="Clear search"
+                  aria-label="Clear search"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0 0.15rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 1,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-main)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                >
+                  <X size={14} strokeWidth={2} />
+                </button>
+              )}
             </form>
 
             <select
