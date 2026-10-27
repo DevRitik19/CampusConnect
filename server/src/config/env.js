@@ -10,13 +10,20 @@ export const ENV = {
   COOKIE_NAME: process.env.COOKIE_NAME || 'campusconnect_token',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
   COLLEGE_NAME: process.env.COLLEGE_NAME || 'Scaler School of Technology',
-  COLLEGE_EMAIL_DOMAIN: (process.env.COLLEGE_EMAIL_DOMAIN || 'all').toLowerCase().trim(),
+  COLLEGE_EMAIL_DOMAIN: (process.env.COLLEGE_EMAIL_DOMAIN || 'campus.edu').toLowerCase().trim(),
 };
 
-// Fail fast in production if required vars missing
-if (!ENV.MONGODB_URI) {
-  console.error('FATAL: MONGODB_URI environment variable is not defined.');
-  if (ENV.NODE_ENV === 'production') {
+// Fail fast in production if required environment variables are missing
+if (ENV.NODE_ENV === 'production') {
+  if (!ENV.MONGODB_URI) {
+    console.error('FATAL: MONGODB_URI environment variable is not defined.');
     process.exit(1);
   }
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'fallback_secret_for_dev_only') {
+    console.error('FATAL: A secure, non-default JWT_SECRET environment variable is required in production.');
+    process.exit(1);
+  }
+} else if (!ENV.MONGODB_URI) {
+  console.warn('WARN: MONGODB_URI environment variable is not defined. Defaulting to mongodb://localhost:27017/campusconnect');
+  ENV.MONGODB_URI = 'mongodb://localhost:27017/campusconnect';
 }

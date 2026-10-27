@@ -9,6 +9,7 @@ import { Event } from '../src/models/Event.js';
 import { Conversation } from '../src/models/Conversation.js';
 import { Message } from '../src/models/Message.js';
 import { Report } from '../src/models/Report.js';
+import { ENV } from '../src/config/env.js';
 
 let server;
 let baseUrl;
@@ -44,6 +45,7 @@ const makeRequest = async (path, options = {}, cookie = '') => {
 
 test.before(async () => {
   await connectDB();
+  await User.deleteMany({ email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } });
   await new Promise((resolve) => {
     server = http.createServer(app);
     server.listen(0, () => {
@@ -55,6 +57,7 @@ test.before(async () => {
 });
 
 test.after(async () => {
+  await User.deleteMany({ email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } });
   if (server) {
     await new Promise((resolve) => server.close(resolve));
   }
@@ -64,17 +67,23 @@ test.after(async () => {
 // 1. AUTHENTICATION & SECURITY TESTS
 // ==========================================
 test('AUTH: Reject registration with non-college email domain', async () => {
-  const res = await makeRequest('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify({
-      name: 'External Person',
-      email: 'external@gmail.com',
-      password: 'password123',
-    }),
-  });
-  assert.equal(res.status, 400);
-  assert.equal(res.data.success, false);
-  assert.match(res.data.message, /college email address/);
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.COLLEGE_EMAIL_DOMAIN = 'campus.edu';
+  try {
+    const res = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'External Person',
+        email: 'external@gmail.com',
+        password: 'password123',
+      }),
+    });
+    assert.equal(res.status, 400);
+    assert.equal(res.data.success, false);
+    assert.match(res.data.message, /college email address/);
+  } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
 });
 
 test('AUTH: Reject registration with weak password (< 6 chars)', async () => {
