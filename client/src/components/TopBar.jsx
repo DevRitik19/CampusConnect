@@ -117,27 +117,29 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
           <span>Post Listing</span>
         </Link>
 
-        {/* Public Profile button */}
-        <Link
-          to={user ? `/profile/${user._id}` : '/login'}
-          className="btn btn-secondary btn-sm"
-          style={{
-            padding: '0.45rem 0.85rem',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border)',
-            color: 'var(--text-main)',
-          }}
-        >
-          <UserRound size={14} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
-          <span>Public Profile</span>
-          <ExternalLink size={12} strokeWidth={1.8} color="var(--text-muted)" aria-hidden="true" />
-        </Link>
+        {/* Public Profile button - only shown when logged in */}
+        {isAuthenticated && user && (
+          <Link
+            to={`/profile/${user._id}`}
+            className="btn btn-secondary btn-sm"
+            style={{
+              padding: '0.45rem 0.85rem',
+              borderRadius: '6px',
+              fontSize: '0.84rem',
+              fontWeight: 600,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-main)',
+            }}
+          >
+            <UserRound size={14} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
+            <span>Public Profile</span>
+            <ExternalLink size={12} strokeWidth={1.8} color="var(--text-muted)" aria-hidden="true" />
+          </Link>
+        )}
 
         {/* Exit / Logout Icon Button */}
         {isAuthenticated ? (

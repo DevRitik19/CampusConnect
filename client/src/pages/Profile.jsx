@@ -10,7 +10,6 @@ import {
   Flag,
   GraduationCap,
   Building,
-  GitCommit,
   Smartphone,
 } from 'lucide-react';
 import api from '../services/api';
@@ -85,78 +84,91 @@ export const Profile = () => {
   const { user: student, posts } = profileData;
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '4rem' }}>
-      {/* Profile Header Card */}
-      <div
-        className="card"
-        style={{
-          padding: '2.5rem',
-          marginBottom: '2.5rem',
-          background: 'var(--bg-surface)',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '2rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', flexWrap: 'wrap' }}>
-          <img
-            src={student.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
-            alt={student.name}
-            style={{
-              width: '5.5rem',
-              height: '5.5rem',
-              borderRadius: '9999px',
-              objectFit: 'cover',
-              border: '2px solid var(--border)',
-              boxShadow: 'var(--shadow-sm)',
-            }}
-          />
+    <div className="container profile-container">
+      {/* Responsive Profile Header Card */}
+      <div className="card profile-card">
+        <div className="profile-main-info">
+          <div className="profile-avatar-wrap">
+            {student.avatarUrl ? (
+              <img
+                src={student.avatarUrl}
+                alt={student.name}
+                className="profile-avatar"
+              />
+            ) : (
+              <div className="profile-avatar-initials">
+                {student.name ? student.name.charAt(0).toUpperCase() : 'S'}
+              </div>
+            )}
+          </div>
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.25rem' }}>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>{student.name}</h1>
-              {student.role === 'ADMIN' && (
+          <div className="profile-details">
+            <div className="profile-title-row">
+              <h1 className="profile-name">{student.name}</h1>
+              {student.role === 'ADMIN' ? (
                 <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)', border: '1px solid #e8b8b4' }}>
                   ADMIN
+                </span>
+              ) : (
+                <span className="badge" style={{ background: 'rgba(52, 74, 50, 0.12)', color: 'var(--forest)', border: '1px solid rgba(52, 74, 50, 0.25)' }}>
+                  STUDENT
                 </span>
               )}
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
+            <div className="profile-meta-grid">
               {student.department && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <div className="profile-meta-item">
                   <Building size={15} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
                   <span>{student.department}</span>
                 </div>
               )}
               {student.year && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <div className="profile-meta-item">
                   <GraduationCap size={15} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
                   <span>{student.year}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <div className="profile-meta-item">
                 <CalendarDays size={15} strokeWidth={1.8} aria-hidden="true" />
                 <span>Joined {new Date(student.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <div className="profile-meta-item">
                 <Smartphone size={15} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
                 <span>Campus Verified</span>
               </div>
             </div>
 
             {student.bio && (
-              <p style={{ fontSize: '0.925rem', color: 'var(--text-main)', maxWidth: '580px', lineHeight: 1.5 }}>
+              <p className="profile-bio">
                 {student.bio}
               </p>
             )}
+
+            {/* Profile Quick Stats */}
+            <div className="profile-stats-row">
+              <div className="profile-stat-box">
+                <span className="profile-stat-value">{posts?.length || 0}</span>
+                <span className="profile-stat-label">Active Listings</span>
+              </div>
+              <div className="profile-stat-box">
+                <span className="profile-stat-value">
+                  {new Date(student.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}
+                </span>
+                <span className="profile-stat-label">Member Since</span>
+              </div>
+              <div className="profile-stat-box">
+                <span className="profile-stat-value" style={{ fontSize: '1rem', paddingTop: '0.2rem' }}>
+                  Active
+                </span>
+                <span className="profile-stat-label">Community Status</span>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Profile Action Buttons */}
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="profile-actions">
           {isSelf ? (
             <Link to="/profile/edit" className="btn btn-secondary">
               <Pencil size={16} strokeWidth={1.8} aria-hidden="true" />
@@ -178,92 +190,6 @@ export const Profile = () => {
               </button>
             </>
           )}
-        </div>
-      </div>
-
-      {/* GitHub & Campus Contribution Heatmap Card */}
-      <div
-        className="card"
-        style={{
-          padding: '1.75rem 2rem',
-          marginBottom: '2.5rem',
-        }}
-      >
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div>
-            <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <GitCommit size={14} strokeWidth={1.8} aria-hidden="true" />
-              Activity & Contribution Matrix
-            </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.2rem' }}>
-              Campus Activity & Open-Source Commits
-            </h3>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.85rem' }}>
-            <div>
-              <span style={{ color: 'var(--text-muted)' }}>Year Total: </span>
-              <span className="stat-value">284 contributions</span>
-            </div>
-            <div>
-              <span style={{ color: 'var(--text-muted)' }}>Longest Streak: </span>
-              <span className="stat-value">22 days</span>
-            </div>
-            <div>
-              <span style={{ color: 'var(--text-muted)' }}>Current Streak: </span>
-              <span className="stat-value">5 days</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Heatmap Grid Container */}
-        <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          <div style={{ display: 'flex', gap: '4px', minWidth: '720px' }}>
-            {Array.from({ length: 44 }).map((_, colIdx) => (
-              <div key={colIdx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {Array.from({ length: 7 }).map((_, rowIdx) => {
-                  // Deterministic pseudo-pattern based on index
-                  const pseudoVal = (colIdx * 7 + rowIdx * 13 + (student.name?.length || 5) * 17) % 19;
-                  let level = 0;
-                  if (pseudoVal > 15) level = 5;
-                  else if (pseudoVal > 11) level = 4;
-                  else if (pseudoVal > 7) level = 3;
-                  else if (pseudoVal > 4) level = 2;
-                  else if (pseudoVal > 2) level = 1;
-
-                  return (
-                    <div
-                      key={rowIdx}
-                      className={`heatmap-${level}`}
-                      title={`${level > 0 ? level * 2 : 0} activities on week ${colIdx + 1}, day ${rowIdx + 1}`}
-                      style={{
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '3px',
-                        border: '1px solid var(--border)',
-                        transition: 'transform 0.15s ease',
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Heatmap Legend */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-          <span style={{ fontFamily: 'var(--font-mono)' }}>Academic Term 2026</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span>Less</span>
-            <div className="heatmap-0" style={{ width: '10px', height: '10px', borderRadius: '2px', border: '1px solid var(--border)' }} />
-            <div className="heatmap-1" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-            <div className="heatmap-2" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-            <div className="heatmap-3" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-            <div className="heatmap-4" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-            <div className="heatmap-5" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
-            <span>More</span>
-          </div>
         </div>
       </div>
 

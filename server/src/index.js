@@ -1,7 +1,7 @@
 import app from './app.js';
 import { connectDB } from './config/db.js';
 import { ENV } from './config/env.js';
-
+// CampusConnect Server Entry Point
 const startServer = async () => {
   try {
     // Connect to database
