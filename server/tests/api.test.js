@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import mongoose from 'mongoose';
 import app from '../src/app.js';
 import { connectDB } from '../src/config/db.js';
 import { User } from '../src/models/User.js';
@@ -10,6 +11,7 @@ import { Conversation } from '../src/models/Conversation.js';
 import { Message } from '../src/models/Message.js';
 import { Report } from '../src/models/Report.js';
 import { ENV } from '../src/config/env.js';
+import { validateCollegeDomainConfig } from '../src/utils/collegeEmail.js';
 
 let server;
 let baseUrl;
@@ -45,7 +47,12 @@ const makeRequest = async (path, options = {}, cookie = '') => {
 
 test.before(async () => {
   await connectDB();
-  await User.deleteMany({ email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } });
+  await User.deleteMany({
+    $or: [
+      { email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } },
+      { email: { $regex: /^test_/ } },
+    ],
+  });
   await new Promise((resolve) => {
     server = http.createServer(app);
     server.listen(0, () => {
@@ -57,16 +64,92 @@ test.before(async () => {
 });
 
 test.after(async () => {
-  await User.deleteMany({ email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } });
+  await User.deleteMany({
+    $or: [
+      { email: { $in: ['external@gmail.com', 'weakpass@campus.edu', 'newstudent@campus.edu'] } },
+      { email: { $regex: /^test_/ } },
+    ],
+  });
   if (server) {
     await new Promise((resolve) => server.close(resolve));
   }
+  await mongoose.disconnect();
 });
 
 // ==========================================
 // 1. AUTHENTICATION & SECURITY TESTS
 // ==========================================
-test('AUTH: Reject registration with non-college email domain', async () => {
+test('COLLEGE_EMAIL: Configuration validation for production vs development', () => {
+  // Production validation: prohibited unrestricted or invalid domains
+  assert.equal(validateCollegeDomainConfig({ domain: '', nodeEnv: 'production' }).valid, false);
+  assert.equal(validateCollegeDomainConfig({ domain: 'all', nodeEnv: 'production' }).valid, false);
+  assert.equal(validateCollegeDomainConfig({ domain: '*', nodeEnv: 'production' }).valid, false);
+  assert.equal(validateCollegeDomainConfig({ domain: 'invalid domain', nodeEnv: 'production' }).valid, false);
+  assert.equal(validateCollegeDomainConfig({ domain: 'nodotdomain', nodeEnv: 'production' }).valid, false);
+
+  // Production validation: valid domains
+  assert.equal(validateCollegeDomainConfig({ domain: 'campus.edu', nodeEnv: 'production' }).valid, true);
+  assert.equal(validateCollegeDomainConfig({ domain: '@campus.edu', nodeEnv: 'production' }).domain, 'campus.edu');
+  assert.equal(validateCollegeDomainConfig({ domain: 'student.college.ac.in', nodeEnv: 'production' }).domain, 'student.college.ac.in');
+
+  // Development validation: allows 'all' and '*' for local testing
+  const devAll = validateCollegeDomainConfig({ domain: 'all', nodeEnv: 'development' });
+  assert.equal(devAll.valid, true);
+  assert.equal(devAll.unrestricted, true);
+
+  const devStar = validateCollegeDomainConfig({ domain: '*', nodeEnv: 'development' });
+  assert.equal(devStar.valid, true);
+  assert.equal(devStar.unrestricted, true);
+
+  const devSpecific = validateCollegeDomainConfig({ domain: 'campus.edu', nodeEnv: 'development' });
+  assert.equal(devSpecific.valid, true);
+  assert.equal(devSpecific.unrestricted, false);
+  assert.equal(devSpecific.domain, 'campus.edu');
+});
+
+test('AUTH: Allowed domain registration succeeds', async () => {
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.COLLEGE_EMAIL_DOMAIN = 'campus.edu';
+  try {
+    const uniqueEmail = `test_allowed_${Date.now()}@campus.edu`;
+    const res = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Allowed Student',
+        email: uniqueEmail,
+        password: 'Password123',
+      }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.success, true);
+    assert.equal(res.data.data.email, uniqueEmail);
+  } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Allowed domain registration succeeds when domain has leading @', async () => {
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.COLLEGE_EMAIL_DOMAIN = '@campus.edu';
+  try {
+    const uniqueEmail = `test_at_domain_${Date.now()}@campus.edu`;
+    const res = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'At Student',
+        email: uniqueEmail,
+        password: 'Password123',
+      }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.success, true);
+    assert.equal(res.data.data.email, uniqueEmail);
+  } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Reject registration with disallowed external email domain', async () => {
   const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
   ENV.COLLEGE_EMAIL_DOMAIN = 'campus.edu';
   try {
@@ -80,8 +163,165 @@ test('AUTH: Reject registration with non-college email domain', async () => {
     });
     assert.equal(res.status, 400);
     assert.equal(res.data.success, false);
-    assert.match(res.data.message, /college email address/);
+    assert.match(res.data.message, /college email address ending with @campus\.edu/);
   } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Reject registration with lookalike or attacker subdomains', async () => {
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.COLLEGE_EMAIL_DOMAIN = 'campus.edu';
+  try {
+    // Suffix lookalike: fakecampus.edu
+    const fakeRes = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Fake College Student',
+        email: 'test_attacker@fakecampus.edu',
+        password: 'password123',
+      }),
+    });
+    assert.equal(fakeRes.status, 400);
+    assert.match(fakeRes.data.message, /college email address ending with @campus\.edu/);
+
+    // Attacker domain with campus.edu as prefix: user@campus.edu.attacker.com
+    const prefixRes = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Attacker Domain',
+        email: 'test_attacker@campus.edu.attacker.com',
+        password: 'password123',
+      }),
+    });
+    assert.equal(prefixRes.status, 400);
+    assert.match(prefixRes.data.message, /college email address ending with @campus\.edu/);
+  } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Case normalization handles mixed-case email and uppercase domain', async () => {
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.COLLEGE_EMAIL_DOMAIN = 'CAMPUS.EDU';
+  try {
+    const timestamp = Date.now();
+    const mixedEmail = `Test_Case_${timestamp}@CaMpUs.EdU`;
+    const res = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Case Normalization Student',
+        email: mixedEmail,
+        password: 'Password123',
+      }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.success, true);
+    assert.equal(res.data.data.email, mixedEmail.toLowerCase());
+  } finally {
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Production fails safely when domain is "all" or "*"', async () => {
+  const originalEnv = ENV.NODE_ENV;
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.NODE_ENV = 'production';
+
+  try {
+    // Test 'all'
+    ENV.COLLEGE_EMAIL_DOMAIN = 'all';
+    const resAll = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Prod All User',
+        email: 'test_prod_all@gmail.com',
+        password: 'Password123',
+      }),
+    });
+    assert.equal(resAll.status, 500);
+    assert.equal(resAll.data.success, false);
+    assert.match(resAll.data.message, /Server configuration error/);
+
+    // Test '*'
+    ENV.COLLEGE_EMAIL_DOMAIN = '*';
+    const resStar = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Prod Star User',
+        email: 'test_prod_star@gmail.com',
+        password: 'Password123',
+      }),
+    });
+    assert.equal(resStar.status, 500);
+    assert.equal(resStar.data.success, false);
+    assert.match(resStar.data.message, /Server configuration error/);
+  } finally {
+    ENV.NODE_ENV = originalEnv;
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Production fails safely when domain is missing or invalid', async () => {
+  const originalEnv = ENV.NODE_ENV;
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.NODE_ENV = 'production';
+
+  try {
+    // Missing domain
+    ENV.COLLEGE_EMAIL_DOMAIN = '';
+    const resMissing = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Prod Missing Domain',
+        email: 'test_prod_missing@campus.edu',
+        password: 'Password123',
+      }),
+    });
+    assert.equal(resMissing.status, 500);
+    assert.equal(resMissing.data.success, false);
+    assert.match(resMissing.data.message, /Server configuration error/);
+
+    // Invalid domain
+    ENV.COLLEGE_EMAIL_DOMAIN = 'invalid domain with spaces';
+    const resInvalid = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Prod Invalid Domain',
+        email: 'test_prod_invalid@campus.edu',
+        password: 'Password123',
+      }),
+    });
+    assert.equal(resInvalid.status, 500);
+    assert.equal(resInvalid.data.success, false);
+    assert.match(resInvalid.data.message, /Server configuration error/);
+  } finally {
+    ENV.NODE_ENV = originalEnv;
+    ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
+  }
+});
+
+test('AUTH: Development mode permits registration when domain is "all" or "*"', async () => {
+  const originalEnv = ENV.NODE_ENV;
+  const originalDomain = ENV.COLLEGE_EMAIL_DOMAIN;
+  ENV.NODE_ENV = 'development';
+  ENV.COLLEGE_EMAIL_DOMAIN = 'all';
+
+  try {
+    const devEmail = `test_dev_${Date.now()}@gmail.com`;
+    const res = await makeRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Dev Any Domain Student',
+        email: devEmail,
+        password: 'Password123',
+      }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.data.success, true);
+    assert.equal(res.data.data.email, devEmail);
+  } finally {
+    ENV.NODE_ENV = originalEnv;
     ENV.COLLEGE_EMAIL_DOMAIN = originalDomain;
   }
 });

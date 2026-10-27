@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   Send,
   MessageCircle,
+  MessageSquare,
   ArrowLeft,
   Layers,
   Clock,
@@ -67,20 +68,23 @@ export const Messages = () => {
       if (selectedConversationId) {
         const found = conversations.find((c) => c._id === selectedConversationId);
         if (found) {
-          setActiveConversation(found);
-          fetchMessages(found._id);
+          if (activeConversation?._id !== found._id) {
+            setActiveConversation(found);
+            fetchMessages(found._id);
+          }
         } else {
-          // If not in list, fetch its messages directly
-          fetchMessages(selectedConversationId);
+          setActiveConversation(conversations[0]);
+          setSearchParams({ conversationId: conversations[0]._id }, { replace: true });
+          fetchMessages(conversations[0]._id);
         }
       } else {
         // Default to first conversation
         setActiveConversation(conversations[0]);
-        setSearchParams({ conversationId: conversations[0]._id });
+        setSearchParams({ conversationId: conversations[0]._id }, { replace: true });
         fetchMessages(conversations[0]._id);
       }
     }
-  }, [conversations, selectedConversationId, fetchMessages, setSearchParams]);
+  }, [conversations, selectedConversationId, fetchMessages, setSearchParams, activeConversation?._id]);
 
   // Periodic polling for new messages every 5 seconds
   useEffect(() => {
@@ -123,7 +127,8 @@ export const Messages = () => {
 
   const getOtherParticipant = (conv) => {
     if (!conv?.participants || !user) return null;
-    return conv.participants.find((p) => p._id !== user._id) || conv.participants[0];
+    const myId = user._id?.toString();
+    return conv.participants.find((p) => p?._id?.toString() !== myId) || conv.participants[0];
   };
 
   const otherUser = activeConversation ? getOtherParticipant(activeConversation) : null;
@@ -350,7 +355,7 @@ export const Messages = () => {
                   <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
                     <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>Start of conversation</p>
                     <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                      Say hello to {otherUser.name.split(' ')[0]} and ask about their listing!
+                      Say hello to {otherUser?.name ? otherUser.name.split(' ')[0] : 'them'} and ask about their listing!
                     </p>
                   </div>
                 )}
@@ -371,7 +376,7 @@ export const Messages = () => {
               >
                 <input
                   type="text"
-                  placeholder={`Message ${otherUser.name.split(' ')[0]}...`}
+                  placeholder={`Message ${otherUser?.name ? otherUser.name.split(' ')[0] : 'student'}...`}
                   value={newMessageText}
                   onChange={(e) => setNewMessageText(e.target.value)}
                   style={{

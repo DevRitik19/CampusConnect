@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../models/User.js';
 import { ENV } from '../config/env.js';
 import { generateToken, clearTokenCookie } from '../utils/generateToken.js';
+import { validateRegistrationEmail } from '../utils/collegeEmail.js';
 
 // @desc    Register a new student
 // @route   POST /api/auth/register
@@ -17,29 +18,16 @@ export const register = async (req, res, next) => {
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Basic email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(normalizedEmail)) {
-      return res.status(400).json({
+    // Validate email format and college domain configuration
+    const emailValidation = validateRegistrationEmail(email, ENV.COLLEGE_EMAIL_DOMAIN, ENV.NODE_ENV);
+    if (!emailValidation.valid) {
+      return res.status(emailValidation.status || 400).json({
         success: false,
-        message: 'Please provide a valid email address format',
+        message: emailValidation.message,
       });
     }
 
-    // Enforce college email domain only if not configured as 'all' or '*'
-    if (ENV.COLLEGE_EMAIL_DOMAIN && ENV.COLLEGE_EMAIL_DOMAIN !== 'all' && ENV.COLLEGE_EMAIL_DOMAIN !== '*') {
-      const expectedDomain = ENV.COLLEGE_EMAIL_DOMAIN.startsWith('@')
-        ? ENV.COLLEGE_EMAIL_DOMAIN
-        : `@${ENV.COLLEGE_EMAIL_DOMAIN}`;
-      if (!normalizedEmail.endsWith(expectedDomain)) {
-        return res.status(400).json({
-          success: false,
-          message: `Please use your valid college email address ending with ${expectedDomain}`,
-        });
-      }
-    }
+    const normalizedEmail = emailValidation.email;
 
     if (password.length < 6) {
       return res.status(400).json({

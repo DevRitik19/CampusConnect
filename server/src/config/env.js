@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+import { validateCollegeDomainConfig } from '../utils/collegeEmail.js';
+
 dotenv.config();
 
 export const ENV = {
@@ -10,7 +12,9 @@ export const ENV = {
   COOKIE_NAME: process.env.COOKIE_NAME || 'campusconnect_token',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
   COLLEGE_NAME: process.env.COLLEGE_NAME || 'Scaler School of Technology',
-  COLLEGE_EMAIL_DOMAIN: (process.env.COLLEGE_EMAIL_DOMAIN || 'campus.edu').toLowerCase().trim(),
+  COLLEGE_EMAIL_DOMAIN: process.env.COLLEGE_EMAIL_DOMAIN !== undefined
+    ? process.env.COLLEGE_EMAIL_DOMAIN.toLowerCase().trim()
+    : (process.env.NODE_ENV === 'production' ? '' : 'campus.edu'),
 };
 
 // Fail fast in production if required environment variables are missing
@@ -23,7 +27,16 @@ if (ENV.NODE_ENV === 'production') {
     console.error('FATAL: A secure, non-default JWT_SECRET environment variable is required in production.');
     process.exit(1);
   }
+  const domainValidation = validateCollegeDomainConfig({
+    domain: ENV.COLLEGE_EMAIL_DOMAIN,
+    nodeEnv: 'production',
+  });
+  if (!domainValidation.valid) {
+    console.error(`FATAL: ${domainValidation.error}`);
+    process.exit(1);
+  }
 } else if (!ENV.MONGODB_URI) {
   console.warn('WARN: MONGODB_URI environment variable is not defined. Defaulting to mongodb://localhost:27017/campusconnect');
   ENV.MONGODB_URI = 'mongodb://localhost:27017/campusconnect';
 }
+

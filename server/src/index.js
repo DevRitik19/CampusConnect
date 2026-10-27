@@ -12,7 +12,14 @@ const startServer = async () => {
         `[CampusConnect Server] Running in ${ENV.NODE_ENV} mode on port ${ENV.PORT}`
       );
       console.log(`[CampusConnect Server] College configured: ${ENV.COLLEGE_NAME}`);
-      console.log(`[CampusConnect Server] Domain restricted to: @${ENV.COLLEGE_EMAIL_DOMAIN}`);
+      if (ENV.COLLEGE_EMAIL_DOMAIN === 'all' || ENV.COLLEGE_EMAIL_DOMAIN === '*') {
+        console.log('[CampusConnect Server] Domain restriction: UNRESTRICTED (Development only)');
+      } else if (ENV.COLLEGE_EMAIL_DOMAIN) {
+        const cleanDomain = ENV.COLLEGE_EMAIL_DOMAIN.replace(/^@+/, '');
+        console.log(`[CampusConnect Server] Domain restricted to: @${cleanDomain}`);
+      } else {
+        console.log('[CampusConnect Server] Domain restriction: NONE CONFIGURED');
+      }
     });
 
     // Handle unhandled rejections and termination signals

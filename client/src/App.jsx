@@ -23,6 +23,7 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { NotFound } from './pages/NotFound';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Protected Route Guard
 const ProtectedRoute = ({ children }) => {
@@ -87,106 +88,108 @@ export const App = () => {
           <div className="devtrack-main-layout">
             <TopBar onToggleMobileSidebar={() => setMobileSidebarOpen(true)} />
             <main className="main-content">
-              <Routes>
-                {/* Public Discovery Routes */}
-                <Route path="/" element={<Landing />} />
-                <Route path="/feed" element={<HomeFeed />} />
-                <Route path="/lost-found" element={<LostFound />} />
-                <Route path="/marketplace" element={<Marketplace />} />
-                <Route path="/collaborate" element={<Collaborate />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/posts/:id" element={<PostDetails />} />
-                <Route path="/profile/:id" element={<Profile />} />
+              <ErrorBoundary>
+                <Routes>
+                  {/* Public Discovery Routes */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/feed" element={<HomeFeed />} />
+                  <Route path="/lost-found" element={<LostFound />} />
+                  <Route path="/marketplace" element={<Marketplace />} />
+                  <Route path="/collaborate" element={<Collaborate />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/posts/:id" element={<PostDetails />} />
+                  <Route path="/profile/:id" element={<Profile />} />
 
-                {/* Guest Authentication Routes */}
-                <Route
-                  path="/login"
-                  element={
-                    <GuestRoute>
-                      <Login />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="/register"
-                  element={
-                    <GuestRoute>
-                      <Register />
-                    </GuestRoute>
-                  }
-                />
+                  {/* Guest Authentication Routes */}
+                  <Route
+                    path="/login"
+                    element={
+                      <GuestRoute>
+                        <Login />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={
+                      <GuestRoute>
+                        <Register />
+                      </GuestRoute>
+                    }
+                  />
 
-                {/* Protected Student Routes */}
-                <Route
-                  path="/create-post"
-                  element={
-                    <ProtectedRoute>
-                      <CreatePost />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/edit-post/:id"
-                  element={
-                    <ProtectedRoute>
-                      <EditPost />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/messages"
-                  element={
-                    <ProtectedRoute>
-                      <Messages />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile/edit"
-                  element={
-                    <ProtectedRoute>
-                      <EditProfile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/saved"
-                  element={
-                    <ProtectedRoute>
-                      <SavedItems />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/my-posts"
-                  element={
-                    <ProtectedRoute>
-                      <MyListings />
-                    </ProtectedRoute>
-                  }
-                />
+                  {/* Protected Student Routes */}
+                  <Route
+                    path="/create-post"
+                    element={
+                      <ProtectedRoute>
+                        <CreatePost />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/edit-post/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditPost />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/messages"
+                    element={
+                      <ProtectedRoute>
+                        <Messages />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile/edit"
+                    element={
+                      <ProtectedRoute>
+                        <EditProfile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/saved"
+                    element={
+                      <ProtectedRoute>
+                        <SavedItems />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/my-posts"
+                    element={
+                      <ProtectedRoute>
+                        <MyListings />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                {/* Admin Moderation Routes */}
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
-                <Route
-                  path="/admin/reports"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
+                  {/* Admin Moderation Routes */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminRoute>
+                        <AdminDashboard />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/reports"
+                    element={
+                      <AdminRoute>
+                        <AdminDashboard />
+                      </AdminRoute>
+                    }
+                  />
 
-                {/* 404 Catch-All */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  {/* 404 Catch-All */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </ErrorBoundary>
             </main>
             <Footer />
           </div>
