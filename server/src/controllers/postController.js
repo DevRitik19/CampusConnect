@@ -1,5 +1,6 @@
 import { Post } from '../models/Post.js';
 import { User } from '../models/User.js';
+import { isFutureDate } from '../utils/dateUtils.js';
 
 // @desc    Get all posts with filters & pagination
 // @route   GET /api/posts
@@ -158,7 +159,25 @@ export const createPost = async (req, res, next) => {
         });
       }
       validatedDetails.itemState = details.itemState;
-      validatedDetails.dateOccurred = details.dateOccurred ? new Date(details.dateOccurred) : new Date();
+
+      if (details.dateOccurred !== undefined && details.dateOccurred !== null && details.dateOccurred !== '') {
+        const parsedDate = new Date(details.dateOccurred);
+        if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+            success: false,
+            message: 'Please provide a valid date for dateOccurred',
+          });
+        }
+        if (isFutureDate(details.dateOccurred)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Date occurred cannot be in the future for Lost & Found listings',
+          });
+        }
+        validatedDetails.dateOccurred = parsedDate;
+      } else {
+        validatedDetails.dateOccurred = new Date();
+      }
     } else if (type === 'MARKETPLACE') {
       if (details?.price === undefined || Number(details.price) < 0) {
         return res.status(400).json({
@@ -242,6 +261,21 @@ export const updatePost = async (req, res, next) => {
     }
 
     if (details) {
+      if (post.type === 'LOST_FOUND' && details.dateOccurred !== undefined && details.dateOccurred !== null && details.dateOccurred !== '') {
+        const parsedDate = new Date(details.dateOccurred);
+        if (isNaN(parsedDate.getTime())) {
+          return res.status(400).json({
+            success: false,
+            message: 'Please provide a valid date for dateOccurred',
+          });
+        }
+        if (isFutureDate(details.dateOccurred)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Date occurred cannot be in the future for Lost & Found listings',
+          });
+        }
+      }
       post.details = { ...post.details, ...details };
     }
 

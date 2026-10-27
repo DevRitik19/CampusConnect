@@ -12,6 +12,7 @@ import { Message } from '../src/models/Message.js';
 import { Report } from '../src/models/Report.js';
 import { ENV } from '../src/config/env.js';
 import { validateCollegeDomainConfig } from '../src/utils/collegeEmail.js';
+import { isFutureDate, getCampusDateString, CAMPUS_TIMEZONE } from '../src/utils/dateUtils.js';
 
 let server;
 let baseUrl;
@@ -511,6 +512,214 @@ test('POSTS: Student cannot edit or delete another user’s post', async () => {
     priyaLogin.cookie
   );
   assert.equal(deleteRes.status, 403);
+});
+
+test('POSTS: Lost & Found accepts yesterday dateOccurred', async () => {
+  const loginRes = await makeRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: 'arjun@campus.edu', password: 'Campus@123' }),
+  });
+
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const yesterdayStr = getCampusDateString(yesterday);
+  const res = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'LOST_FOUND',
+        title: 'Lost Keys Yesterday',
+        description: 'Lost a bunch of keys in the cafeteria yesterday afternoon.',
+        category: 'Accessories',
+        details: {
+          itemState: 'LOST',
+          dateOccurred: yesterdayStr,
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(res.status, 201);
+  assert.equal(res.data.success, true);
+  assert.ok(res.data.data._id);
+});
+
+test('POSTS: Lost & Found accepts today dateOccurred', async () => {
+  const loginRes = await makeRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: 'arjun@campus.edu', password: 'Campus@123' }),
+  });
+
+  const todayStr = getCampusDateString();
+
+  const res = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'LOST_FOUND',
+        title: 'Found Umbrella Today',
+        description: 'Found black umbrella near the main entrance this morning.',
+        category: 'Accessories',
+        details: {
+          itemState: 'FOUND',
+          dateOccurred: todayStr,
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(res.status, 201);
+  assert.equal(res.data.success, true);
+  assert.ok(res.data.data._id);
+});
+
+test('POSTS: Lost & Found rejects tomorrow dateOccurred with 400 for both LOST and FOUND', async () => {
+  const loginRes = await makeRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: 'arjun@campus.edu', password: 'Campus@123' }),
+  });
+
+  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const tomorrowStr = getCampusDateString(tomorrow);
+
+  // Test LOST with tomorrow's date
+  const lostRes = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'LOST_FOUND',
+        title: 'Future Lost Item',
+        description: 'Should fail validation because date is in the future.',
+        category: 'Electronics',
+        details: {
+          itemState: 'LOST',
+          dateOccurred: tomorrowStr,
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(lostRes.status, 400);
+  assert.equal(lostRes.data.success, false);
+  assert.match(lostRes.data.message, /future/i);
+
+  // Test FOUND with tomorrow's timestamp
+  const foundRes = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'LOST_FOUND',
+        title: 'Future Found Item',
+        description: 'Should also fail validation because date is in the future.',
+        category: 'Electronics',
+        details: {
+          itemState: 'FOUND',
+          dateOccurred: tomorrow.toISOString(),
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(foundRes.status, 400);
+  assert.equal(foundRes.data.success, false);
+  assert.match(foundRes.data.message, /future/i);
+});
+
+test('POSTS: Future dates in Marketplace and Collaboration are unaffected by Lost & Found rule', async () => {
+  const loginRes = await makeRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: 'arjun@campus.edu', password: 'Campus@123' }),
+  });
+
+  const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Marketplace listing with future date in description or custom details
+  const marketRes = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'MARKETPLACE',
+        title: 'Marketplace Item Available Next Week',
+        description: `Available for pickup on ${nextWeek}`,
+        category: 'Electronics',
+        details: {
+          price: 999,
+          condition: 'LIKE_NEW',
+          itemType: 'Monitor',
+          dateAvailable: nextWeek,
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(marketRes.status, 201);
+  assert.equal(marketRes.data.success, true);
+
+  // Collaboration listing with future availability / date in details
+  const collabRes = await makeRequest(
+    '/posts',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'COLLABORATION',
+        title: 'Hackathon Partner Starting Next Week',
+        description: 'Looking for partner starting next week',
+        category: 'Hackathons',
+        details: {
+          collaborationType: 'HACKATHON_TEAM',
+          subject: 'AI Hackathon',
+          availability: `Starting ${nextWeek}`,
+          skills: ['React', 'Node.js'],
+        },
+      }),
+    },
+    loginRes.cookie
+  );
+
+  assert.equal(collabRes.status, 201);
+  assert.equal(collabRes.data.success, true);
+});
+
+test('TIMEZONE: Asia/Kolkata midnight transitions evaluate correctly without false rejections', async () => {
+  assert.equal(CAMPUS_TIMEZONE, 'Asia/Kolkata');
+
+  // 1 second BEFORE midnight in Asia/Kolkata (23:59:59 IST on 2026-10-27 = 18:29:59 UTC on 2026-10-27)
+  const beforeMidnight = new Date('2026-10-27T18:29:59.000Z');
+  assert.equal(getCampusDateString(beforeMidnight), '2026-10-27');
+  assert.equal(isFutureDate('2026-10-26', beforeMidnight), false, 'Yesterday should be accepted before midnight');
+  assert.equal(isFutureDate('2026-10-27', beforeMidnight), false, 'Today should be accepted before midnight');
+  assert.equal(isFutureDate('2026-10-28', beforeMidnight), true, 'Tomorrow should be rejected before midnight');
+
+  // 1 second AFTER midnight in Asia/Kolkata (00:00:01 IST on 2026-10-28 = 18:30:01 UTC on 2026-10-27)
+  const afterMidnight = new Date('2026-10-27T18:30:01.000Z');
+  assert.equal(getCampusDateString(afterMidnight), '2026-10-28');
+  assert.equal(isFutureDate('2026-10-27', afterMidnight), false, 'Yesterday should be accepted after midnight');
+  assert.equal(isFutureDate('2026-10-28', afterMidnight), false, 'New today should be accepted after midnight');
+  assert.equal(isFutureDate('2026-10-29', afterMidnight), true, 'New tomorrow should be rejected after midnight');
+});
+
+test('TIMEZONE: Cross-timezone servers do not reject Indian students’ current date or permit future date', async () => {
+  // Scenario: Server runs in UTC time (e.g. cloud hosting) at 19:00:00 UTC on 2026-10-27.
+  // In India, it is 00:30 AM on 2026-10-28.
+  const utcServerRef = new Date('2026-10-27T19:00:00.000Z');
+  assert.equal(getCampusDateString(utcServerRef), '2026-10-28');
+  // Student selects 2026-10-28 (their current campus date): MUST NOT be rejected
+  assert.equal(isFutureDate('2026-10-28', utcServerRef), false, 'Indian student today must be accepted on UTC server');
+  // Student enters 2026-10-29 (tomorrow): MUST be rejected
+  assert.equal(isFutureDate('2026-10-29', utcServerRef), true, 'Tomorrow must be rejected on UTC server');
+
+  // Scenario: Testing date-only string vs Date object vs ISO string
+  assert.equal(isFutureDate(new Date('2026-10-28T05:30:00.000Z'), utcServerRef), false);
+  assert.equal(isFutureDate(new Date('2026-10-29T05:30:00.000Z'), utcServerRef), true);
 });
 
 // ==========================================

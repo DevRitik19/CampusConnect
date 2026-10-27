@@ -3,6 +3,22 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PackageSearch, ShoppingBag, Users, Plus, ArrowLeft, CircleAlert } from 'lucide-react';
 import api from '../services/api';
 
+const CAMPUS_TIMEZONE = 'Asia/Kolkata';
+
+const getCampusTodayString = () => {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: CAMPUS_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = formatter.formatToParts(new Date());
+  const year = parts.find((p) => p.type === 'year').value;
+  const month = parts.find((p) => p.type === 'month').value;
+  const day = parts.find((p) => p.type === 'day').value;
+  return `${year}-${month}-${day}`;
+};
+
 export const CreatePost = () => {
   const [searchParams] = useSearchParams();
   const initialType = searchParams.get('type') || 'LOST_FOUND';
@@ -20,7 +36,7 @@ export const CreatePost = () => {
 
   // Lost & Found details
   const [itemState, setItemState] = useState('LOST');
-  const [dateOccurred, setDateOccurred] = useState(new Date().toISOString().split('T')[0]);
+  const [dateOccurred, setDateOccurred] = useState(getCampusTodayString());
 
   // Marketplace details
   const [price, setPrice] = useState('');
@@ -36,6 +52,30 @@ export const CreatePost = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const handleCategorySwitch = (type, defaultCategory) => {
+    setPostType(type);
+    setCategory(defaultCategory);
+    if (type === 'LOST_FOUND') {
+      const today = getCampusTodayString();
+      if (dateOccurred && dateOccurred > today) {
+        setDateOccurred('');
+        setError('Date occurred cannot be in the future for Lost & Found listings.');
+      }
+    }
+  };
+
+  const handleDateOccurredChange = (e) => {
+    const selectedDate = e.target.value;
+    const today = getCampusTodayString();
+    if (selectedDate && selectedDate > today) {
+      setError('Date occurred cannot be in the future for Lost & Found listings.');
+      setDateOccurred('');
+      return;
+    }
+    setError(null);
+    setDateOccurred(selectedDate);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +98,11 @@ export const CreatePost = () => {
     };
 
     if (postType === 'LOST_FOUND') {
+      const today = getCampusTodayString();
+      if (dateOccurred && dateOccurred > today) {
+        setError('Date occurred cannot be in the future for Lost & Found listings.');
+        return;
+      }
       payload.details.itemState = itemState;
       payload.details.dateOccurred = dateOccurred ? new Date(dateOccurred) : new Date();
     } else if (postType === 'MARKETPLACE') {
@@ -119,10 +164,7 @@ export const CreatePost = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '2rem' }}>
           <button
             type="button"
-            onClick={() => {
-              setPostType('LOST_FOUND');
-              setCategory('Electronics');
-            }}
+            onClick={() => handleCategorySwitch('LOST_FOUND', 'Electronics')}
             className="btn"
             style={{
               padding: '0.85rem 0.5rem',
@@ -143,10 +185,7 @@ export const CreatePost = () => {
 
           <button
             type="button"
-            onClick={() => {
-              setPostType('MARKETPLACE');
-              setCategory('Books & Notes');
-            }}
+            onClick={() => handleCategorySwitch('MARKETPLACE', 'Books & Notes')}
             className="btn"
             style={{
               padding: '0.85rem 0.5rem',
@@ -167,10 +206,7 @@ export const CreatePost = () => {
 
           <button
             type="button"
-            onClick={() => {
-              setPostType('COLLABORATION');
-              setCategory('Hackathons');
-            }}
+            onClick={() => handleCategorySwitch('COLLABORATION', 'Hackathons')}
             className="btn"
             style={{
               padding: '0.85rem 0.5rem',
@@ -210,9 +246,10 @@ export const CreatePost = () => {
                 <label className="form-label">Date Occurred</label>
                 <input
                   type="date"
+                  max={getCampusTodayString()}
                   className="form-control"
                   value={dateOccurred}
-                  onChange={(e) => setDateOccurred(e.target.value)}
+                  onChange={handleDateOccurredChange}
                 />
               </div>
             </div>
