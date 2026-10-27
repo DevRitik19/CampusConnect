@@ -16,7 +16,7 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
   // Derive title from pathname or user
   const getPageTitle = () => {
     const p = location.pathname;
-    if (p === '/' || p === '/feed') return user?.name || 'Alex Rivera';
+    if (p === '/' || p === '/feed') return 'Overview';
     if (p.startsWith('/marketplace')) return 'Student Marketplace';
     if (p.startsWith('/collaborate')) return 'Study & Teams';
     if (p.startsWith('/lost-found')) return 'Lost & Found';
