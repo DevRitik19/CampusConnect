@@ -60,32 +60,14 @@ export const Landing = () => {
         }}
       >
         <div className="container" style={{ textAlign: 'center', maxWidth: '820px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border)',
-              padding: '0.35rem 0.9rem',
-              borderRadius: 'var(--radius-full)',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              color: 'var(--primary)',
-              marginBottom: '1.5rem',
-              boxShadow: 'var(--shadow-sm)',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-            }}
-          >
-            <Sparkles size={14} strokeWidth={1.8} aria-hidden="true" />
-            <span>Dedicated Campus Utility — Scaler School of Technology</span>
+          <div className="hero-badge">
+            <Sparkles size={14} strokeWidth={1.8} aria-hidden="true" style={{ flexShrink: 0 }} />
+            <span>Dedicated Campus Utility &mdash; Scaler School of Technology</span>
           </div>
 
           <h1
             style={{
-              fontSize: 'clamp(2.1rem, 5vw, 3.2rem)',
+              fontSize: 'clamp(1.85rem, 5vw, 3.2rem)',
               fontWeight: 800,
               letterSpacing: '-0.03em',
               lineHeight: 1.15,
@@ -98,12 +80,12 @@ export const Landing = () => {
 
           <p
             style={{
-              fontSize: '1.15rem',
+              fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
               color: 'var(--text-muted)',
               lineHeight: 1.6,
-              marginBottom: '2.25rem',
+              marginBottom: '2rem',
               maxWidth: '680px',
-              margin: '0 auto 2.25rem',
+              margin: '0 auto 2rem',
             }}
           >
             Say goodbye to cluttered WhatsApp groups and lost notices. Connect with batchmates, recover lost belongings, exchange textbooks, find hackathon teammates, and never miss an event.
@@ -112,47 +94,23 @@ export const Landing = () => {
           {/* Hero Search Bar */}
           <form
             onSubmit={handleSearchSubmit}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: 'var(--bg-surface)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '0.5rem 0.6rem 0.5rem 1.25rem',
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.08)',
-              border: '1px solid var(--border)',
-              maxWidth: '640px',
-              margin: '0 auto 2.5rem',
-            }}
+            className="hero-search-form"
           >
-            <Search size={20} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.75rem', flexShrink: 0 }} aria-hidden="true" />
+            <Search size={18} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.65rem', flexShrink: 0 }} aria-hidden="true" />
             <input
               type="text"
-              placeholder="Search for lost items, books, hackathons, or study groups..."
+              placeholder="Search lost items, books, hackathons..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                fontSize: '1rem',
-                color: 'var(--text-main)',
-              }}
+              className="hero-search-input"
             />
-            <button type="submit" className="btn btn-primary" style={{ flexShrink: 0 }}>
+            <button type="submit" className="btn btn-primary hero-search-btn">
               Search
             </button>
           </form>
 
           {/* Category Shortcut Cards */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-              gap: '1rem',
-              textAlign: 'left',
-            }}
-          >
+          <div className="hero-shortcuts-grid">
             <Link
               to="/lost-found"
               className="card"

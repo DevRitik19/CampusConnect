@@ -35,108 +35,51 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
   const accountBadgeText = user ? 'Campus Account' : null;
 
   return (
-    <header
-      style={{
-        height: '56px',
-        background: 'var(--bg-page)',
-        borderBottom: '1px solid var(--border)',
-        padding: '0 1.75rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-        backdropFilter: 'blur(8px)',
-      }}
-      className="devtrack-topbar"
-    >
+    <header className="devtrack-topbar">
       {/* Left: Mobile Toggle & Breadcrumbs */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-        {/* Mobile menu toggle (Ellipsis matching reference design) */}
+      <div className="topbar-left">
+        {/* Mobile menu toggle */}
         <button
           onClick={onToggleMobileSidebar}
           className="mobile-sidebar-toggle"
           aria-label="Toggle navigation menu"
-          style={{
-            display: 'none',
-            color: 'var(--forest)',
-            padding: '0.35rem',
-            borderRadius: '6px',
-            border: '1px solid var(--border)',
-            background: 'var(--bg-surface)',
-          }}
           title="Toggle Navigation Menu"
         >
           <Ellipsis size={18} strokeWidth={1.8} aria-hidden="true" />
         </button>
 
-        {/* Breadcrumb matching DevTrack screenshot */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.88rem' }}>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>workspace /</span>
-          <span style={{ color: 'var(--forest)', fontWeight: 700 }}>{getPageTitle()}</span>
+        {/* Breadcrumb */}
+        <div className="topbar-breadcrumb">
+          <span className="topbar-workspace-prefix">workspace /</span>
+          <span className="topbar-page-title">{getPageTitle()}</span>
           {accountBadgeText && (
-            <span
-              style={{
-                background: '#EAE2D3',
-                color: '#8a6245',
-                border: '1px solid var(--border)',
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                padding: '0.15rem 0.5rem',
-                borderRadius: '4px',
-                fontFamily: 'var(--font-mono)',
-                marginLeft: '0.35rem',
-                letterSpacing: '0.02em',
-              }}
-            >
+            <span className="topbar-account-badge">
               {accountBadgeText}
             </span>
           )}
         </div>
       </div>
 
-      {/* Right Actions matching DevTrack screenshot */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {/* + Log Activity / + Post Listing button in terracotta */}
+      {/* Right Actions */}
+      <div className="topbar-right">
+        {/* + Post Listing button in terracotta */}
         <Link
           to="/create-post"
-          className="btn btn-primary btn-sm"
-          style={{
-            padding: '0.45rem 1rem',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 700,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            boxShadow: '0 1px 3px rgba(182, 95, 59, 0.25)',
-          }}
+          className="btn btn-primary btn-sm topbar-post-btn"
         >
           <Plus size={15} strokeWidth={2} aria-hidden="true" />
-          <span>Post Listing</span>
+          <span className="topbar-post-text-full">Post Listing</span>
+          <span className="topbar-post-text-short">Post</span>
         </Link>
 
         {/* Public Profile button - only shown when logged in */}
         {isAuthenticated && user && (
           <Link
             to={`/profile/${user._id}`}
-            className="btn btn-secondary btn-sm"
-            style={{
-              padding: '0.45rem 0.85rem',
-              borderRadius: '6px',
-              fontSize: '0.84rem',
-              fontWeight: 600,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-main)',
-            }}
+            className="btn btn-secondary btn-sm topbar-profile-btn"
           >
             <UserRound size={14} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
-            <span>Public Profile</span>
+            <span className="topbar-profile-text">Profile</span>
             <ExternalLink size={12} strokeWidth={1.8} color="var(--text-muted)" aria-hidden="true" />
           </Link>
         )}
@@ -147,32 +90,14 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
             onClick={handleLogout}
             title="Sign Out"
             aria-label="Sign out"
-            style={{
-              color: 'var(--text-muted)',
-              padding: '0.45rem',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid transparent',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--danger)';
-              e.currentTarget.style.background = 'var(--danger-light)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-muted)';
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className="topbar-logout-btn"
           >
             <LogOut size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         ) : (
           <Link
             to="/login"
-            className="btn btn-sm btn-secondary"
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+            className="btn btn-sm btn-secondary topbar-signin-btn"
           >
             Sign In
           </Link>
