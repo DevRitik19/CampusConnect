@@ -92,15 +92,15 @@ export const Sidebar = ({ isOpen, onClose, collapsed, onToggleCollapse }) => {
     });
   }
 
-  // Display user info (fallback to Alex Rivera demo account if unauthenticated, matching screenshot)
-  const displayName = user?.name || 'Alex Rivera';
+  // Display user info (fallback to Guest if unauthenticated)
+  const displayName = user?.name || 'Guest Student';
   const displayHandle = user?.name
     ? `@${user.name.toLowerCase().replace(/\s+/g, '_')}`
-    : '@alex_rivera';
+    : '@guest';
   const displayAvatar =
     user?.avatarUrl ||
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100';
-  const displayBadge = isAdmin ? 'ADMIN' : user ? 'STUDENT' : 'DEMO';
+  const displayBadge = isAdmin ? 'ADMIN' : user ? 'STUDENT' : 'GUEST';
 
   return (
     <>

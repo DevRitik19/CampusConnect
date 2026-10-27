@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Layers, ArrowRight, ShieldCheck, Sparkles, CircleAlert } from 'lucide-react';
+import { Layers, ArrowRight, CircleAlert } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -25,17 +25,6 @@ export const Login = () => {
     } else {
       setError(result.message || 'Login failed. Please verify your credentials.');
     }
-  };
-
-  // Quick fill demo accounts
-  const fillDemoStudent = () => {
-    setEmail('arjun@scaler.com');
-    setPassword('Campus@123');
-  };
-
-  const fillDemoAdmin = () => {
-    setEmail('admin@scaler.com');
-    setPassword('Campus@123');
   };
 
   return (
@@ -106,7 +95,7 @@ export const Login = () => {
             <input
               type="email"
               required
-              placeholder="e.g. yourname@scaler.com or email@gmail.com"
+              placeholder="Your mail"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -135,40 +124,6 @@ export const Login = () => {
             <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
           </button>
         </form>
-
-        {/* Quick Fill Demo Credentials Buttons */}
-        <div
-          style={{
-            marginTop: '1.75rem',
-            paddingTop: '1.5rem',
-            borderTop: '1px solid var(--border)',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
-            <Sparkles size={13} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
-            <span>Quick-Fill Demonstration Accounts</span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.625rem' }}>
-            <button
-              type="button"
-              onClick={fillDemoStudent}
-              className="btn btn-secondary btn-sm"
-              style={{ fontSize: '0.8rem' }}
-            >
-              Student: Arjun
-            </button>
-            <button
-              type="button"
-              onClick={fillDemoAdmin}
-              className="btn btn-secondary btn-sm"
-              style={{ fontSize: '0.8rem' }}
-            >
-              Admin: Dean Office
-            </button>
-          </div>
-        </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '1.75rem' }}>
           Don't have an account yet?{' '}

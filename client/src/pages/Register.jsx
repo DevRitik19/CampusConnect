@@ -129,14 +129,11 @@ export const Register = () => {
             <input
               type="email"
               required
-              placeholder="e.g. aman@scaler.com or student@gmail.com"
+              placeholder="Your mail"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <span className="form-hint">
-              Open to all students. You can register using any valid email address.
-            </span>
           </div>
 
           <div className="form-group">

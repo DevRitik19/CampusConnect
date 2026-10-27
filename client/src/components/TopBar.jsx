@@ -32,7 +32,7 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
     return 'Campus Hub';
   };
 
-  const accountBadgeText = user ? 'Campus Account' : 'Demo Account';
+  const accountBadgeText = user ? 'Campus Account' : null;
 
   return (
     <header
@@ -75,22 +75,24 @@ export const TopBar = ({ onToggleMobileSidebar }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.88rem' }}>
           <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>workspace /</span>
           <span style={{ color: 'var(--forest)', fontWeight: 700 }}>{getPageTitle()}</span>
-          <span
-            style={{
-              background: '#EAE2D3',
-              color: '#8a6245',
-              border: '1px solid var(--border)',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-              padding: '0.15rem 0.5rem',
-              borderRadius: '4px',
-              fontFamily: 'var(--font-mono)',
-              marginLeft: '0.35rem',
-              letterSpacing: '0.02em',
-            }}
-          >
-            {accountBadgeText}
-          </span>
+          {accountBadgeText && (
+            <span
+              style={{
+                background: '#EAE2D3',
+                color: '#8a6245',
+                border: '1px solid var(--border)',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '0.15rem 0.5rem',
+                borderRadius: '4px',
+                fontFamily: 'var(--font-mono)',
+                marginLeft: '0.35rem',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {accountBadgeText}
+            </span>
+          )}
         </div>
       </div>
 
