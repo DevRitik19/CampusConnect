@@ -19,13 +19,26 @@ export const register = async (req, res, next) => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Enforce college email domain
-    const expectedDomain = `@${ENV.COLLEGE_EMAIL_DOMAIN}`;
-    if (!normalizedEmail.endsWith(expectedDomain)) {
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
       return res.status(400).json({
         success: false,
-        message: `Please use your valid college email address ending with ${expectedDomain}`,
+        message: 'Please provide a valid email address format',
       });
+    }
+
+    // Enforce college email domain only if not configured as 'all' or '*'
+    if (ENV.COLLEGE_EMAIL_DOMAIN && ENV.COLLEGE_EMAIL_DOMAIN !== 'all' && ENV.COLLEGE_EMAIL_DOMAIN !== '*') {
+      const expectedDomain = ENV.COLLEGE_EMAIL_DOMAIN.startsWith('@')
+        ? ENV.COLLEGE_EMAIL_DOMAIN
+        : `@${ENV.COLLEGE_EMAIL_DOMAIN}`;
+      if (!normalizedEmail.endsWith(expectedDomain)) {
+        return res.status(400).json({
+          success: false,
+          message: `Please use your valid college email address ending with ${expectedDomain}`,
+        });
+      }
     }
 
     if (password.length < 6) {

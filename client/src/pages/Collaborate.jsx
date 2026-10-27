@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Users, PlusCircle, Code, BookOpen } from 'lucide-react';
+import { Search, Users, Plus, SlidersHorizontal } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -47,39 +47,18 @@ export const Collaborate = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
       {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #4f46e5 0%, #312e81 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.5rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="page-hero">
         <div style={{ maxWidth: '640px' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#c7d2fe', letterSpacing: '0.05em' }}>
-            Team Finder
-          </span>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            Study & Project Collaboration
-          </h1>
-          <p style={{ color: '#e0e7ff', fontSize: '0.95rem', marginTop: '0.4rem', lineHeight: 1.5 }}>
-            Need a frontend developer for the upcoming HackApex? Or looking for a study buddy for semester exams? Find talented peers across all campus departments.
-          </p>
+          <div className="page-hero-label">Team Finder</div>
+          <h1>Study & Project Collaboration</h1>
+          <p>Need a frontend developer for the upcoming HackApex? Or looking for a study buddy for semester exams? Find talented peers across all campus departments.</p>
         </div>
-
         <Link
           to="/create-post?type=COLLABORATION"
-          className="btn btn-lg"
-          style={{ background: '#ffffff', color: 'var(--primary)', fontWeight: 700 }}
+          className="btn btn-primary btn-lg"
         >
-          <PlusCircle size={20} />
-          <span>Find Teammates</span>
+          <Plus size={18} strokeWidth={2} aria-hidden="true" />
+          <span>Post Opportunity</span>
         </Link>
       </div>
 
@@ -95,7 +74,11 @@ export const Collaborate = () => {
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, marginRight: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
+              <span>Type:</span>
+            </div>
             {collabTypes.map((type) => (
               <button
                 key={type.id}
@@ -108,7 +91,7 @@ export const Collaborate = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-            <Search size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+            <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
             <input
               type="text"
               placeholder="Search skill (e.g. React, Python) or subject..."
@@ -131,6 +114,7 @@ export const Collaborate = () => {
         </div>
       ) : (
         <EmptyState
+          icon={Users}
           title="No collaboration posts found"
           description="Looking for teammates or study buddies? Create the first team notice to find like-minded peers."
           actionText="Create Collaboration Post"

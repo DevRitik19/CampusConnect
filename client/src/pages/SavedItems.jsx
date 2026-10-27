@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bookmark, Layers, Calendar, Trash2 } from 'lucide-react';
+import { Bookmark, Layers, CalendarDays, Trash2 } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
 import { EventCard } from '../components/EventCard';
@@ -63,7 +63,7 @@ export const SavedItems = () => {
           onClick={() => setActiveTab('posts')}
           className={`btn ${activeTab === 'posts' ? 'btn-primary' : 'btn-secondary'}`}
         >
-          <Layers size={16} />
+          <Layers size={16} strokeWidth={1.8} aria-hidden="true" />
           <span>Saved Posts ({savedPosts.length})</span>
         </button>
 
@@ -71,7 +71,7 @@ export const SavedItems = () => {
           onClick={() => setActiveTab('events')}
           className={`btn ${activeTab === 'events' ? 'btn-primary' : 'btn-secondary'}`}
         >
-          <Calendar size={16} />
+          <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
           <span>Saved Events ({savedEvents.length})</span>
         </button>
       </div>
@@ -87,6 +87,7 @@ export const SavedItems = () => {
                 <button
                   onClick={() => handleUnsavePost(post._id)}
                   title="Remove from saved"
+                  aria-label="Remove from saved bookmarks"
                   className="btn btn-secondary btn-sm"
                   style={{
                     position: 'absolute',
@@ -98,7 +99,7 @@ export const SavedItems = () => {
                     borderRadius: 'var(--radius-full)',
                   }}
                 >
-                  <Trash2 size={13} color="var(--danger)" />
+                  <Trash2 size={14} strokeWidth={1.8} color="var(--danger)" aria-hidden="true" />
                 </button>
               </div>
             ))}
@@ -126,7 +127,7 @@ export const SavedItems = () => {
           </div>
         ) : (
           <EmptyState
-            icon={Calendar}
+            icon={CalendarDays}
             title="No saved events"
             description="You have not saved any upcoming workshops, club events, or hackathons."
             actionText="Browse Campus Events"

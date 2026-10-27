@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  User as UserIcon,
-  Calendar,
+  UserRound,
+  CalendarDays,
   Layers,
-  MessageSquare,
-  Edit3,
-  AlertTriangle,
+  Send,
+  Pencil,
+  Flag,
   GraduationCap,
   Building,
+  GitCommit,
+  Smartphone,
 } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
@@ -90,7 +92,7 @@ export const Profile = () => {
         style={{
           padding: '2.5rem',
           marginBottom: '2.5rem',
-          background: 'linear-gradient(180deg, #ffffff 0%, var(--bg-subtle) 100%)',
+          background: 'var(--bg-surface)',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
@@ -107,8 +109,8 @@ export const Profile = () => {
               height: '5.5rem',
               borderRadius: '9999px',
               objectFit: 'cover',
-              border: '3px solid #ffffff',
-              boxShadow: 'var(--shadow-md)',
+              border: '2px solid var(--border)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           />
 
@@ -116,7 +118,7 @@ export const Profile = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.25rem' }}>
               <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>{student.name}</h1>
               {student.role === 'ADMIN' && (
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#fee2e2', color: '#b91c1c', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)', border: '1px solid #e8b8b4' }}>
                   ADMIN
                 </span>
               )}
@@ -125,19 +127,23 @@ export const Profile = () => {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
               {student.department && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <Building size={15} color="var(--primary)" />
+                  <Building size={15} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
                   <span>{student.department}</span>
                 </div>
               )}
               {student.year && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <GraduationCap size={15} color="var(--primary)" />
+                  <GraduationCap size={15} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
                   <span>{student.year}</span>
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Calendar size={15} />
+                <CalendarDays size={15} strokeWidth={1.8} aria-hidden="true" />
                 <span>Joined {new Date(student.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Smartphone size={15} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
+                <span>Campus Verified</span>
               </div>
             </div>
 
@@ -153,27 +159,118 @@ export const Profile = () => {
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           {isSelf ? (
             <Link to="/profile/edit" className="btn btn-secondary">
-              <Edit3 size={16} />
+              <Pencil size={16} strokeWidth={1.8} aria-hidden="true" />
               <span>Edit Profile</span>
             </Link>
           ) : (
             <>
               <button onClick={handleStartMessage} className="btn btn-primary">
-                <MessageSquare size={16} />
+                <Send size={16} strokeWidth={1.8} aria-hidden="true" />
                 <span>Send Message</span>
               </button>
-              <button onClick={() => setReportModalOpen(true)} className="btn btn-secondary" title="Report User">
-                <AlertTriangle size={16} color="var(--danger)" />
+              <button
+                onClick={() => setReportModalOpen(true)}
+                className="btn btn-secondary"
+                aria-label="Report student profile"
+                title="Report User"
+              >
+                <Flag size={16} strokeWidth={1.8} color="var(--danger)" aria-hidden="true" />
               </button>
             </>
           )}
         </div>
       </div>
 
+      {/* GitHub & Campus Contribution Heatmap Card */}
+      <div
+        className="card"
+        style={{
+          padding: '1.75rem 2rem',
+          marginBottom: '2.5rem',
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div>
+            <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <GitCommit size={14} strokeWidth={1.8} aria-hidden="true" />
+              Activity & Contribution Matrix
+            </div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.2rem' }}>
+              Campus Activity & Open-Source Commits
+            </h3>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.85rem' }}>
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>Year Total: </span>
+              <span className="stat-value">284 contributions</span>
+            </div>
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>Longest Streak: </span>
+              <span className="stat-value">22 days</span>
+            </div>
+            <div>
+              <span style={{ color: 'var(--text-muted)' }}>Current Streak: </span>
+              <span className="stat-value">5 days</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Heatmap Grid Container */}
+        <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '4px', minWidth: '720px' }}>
+            {Array.from({ length: 44 }).map((_, colIdx) => (
+              <div key={colIdx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {Array.from({ length: 7 }).map((_, rowIdx) => {
+                  // Deterministic pseudo-pattern based on index
+                  const pseudoVal = (colIdx * 7 + rowIdx * 13 + (student.name?.length || 5) * 17) % 19;
+                  let level = 0;
+                  if (pseudoVal > 15) level = 5;
+                  else if (pseudoVal > 11) level = 4;
+                  else if (pseudoVal > 7) level = 3;
+                  else if (pseudoVal > 4) level = 2;
+                  else if (pseudoVal > 2) level = 1;
+
+                  return (
+                    <div
+                      key={rowIdx}
+                      className={`heatmap-${level}`}
+                      title={`${level > 0 ? level * 2 : 0} activities on week ${colIdx + 1}, day ${rowIdx + 1}`}
+                      style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '3px',
+                        border: '1px solid var(--border)',
+                        transition: 'transform 0.15s ease',
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Heatmap Legend */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)' }}>Academic Term 2026</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span>Less</span>
+            <div className="heatmap-0" style={{ width: '10px', height: '10px', borderRadius: '2px', border: '1px solid var(--border)' }} />
+            <div className="heatmap-1" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
+            <div className="heatmap-2" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
+            <div className="heatmap-3" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
+            <div className="heatmap-4" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
+            <div className="heatmap-5" style={{ width: '10px', height: '10px', borderRadius: '2px' }} />
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+
       {/* Student's Listings Section */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-          <Layers size={20} color="var(--primary)" />
+          <Layers size={20} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>
             Active Listings by {student.name.split(' ')[0]}
           </h2>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Layers, Plus, ArrowLeft } from 'lucide-react';
+import { PackageSearch, ShoppingBag, Users, Plus, ArrowLeft, CircleAlert } from 'lucide-react';
 import api from '../services/api';
 
 export const CreatePost = () => {
@@ -94,8 +94,9 @@ export const CreatePost = () => {
         onClick={() => navigate(-1)}
         className="btn btn-secondary btn-sm"
         style={{ marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+        aria-label="Back to previous page"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.8} aria-hidden="true" />
         Back
       </button>
 
@@ -104,12 +105,13 @@ export const CreatePost = () => {
           Create New Campus Listing
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '2rem' }}>
-          Share an update with the Apex Institute community. Choose your listing category below.
+          Share an update with the Scaler School of Technology community. Choose your listing category below.
         </p>
 
         {error && (
-          <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem', border: '1px solid #fecaca' }}>
-            {error}
+          <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem', border: '1px solid #fecaca', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CircleAlert size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -129,8 +131,13 @@ export const CreatePost = () => {
               background: postType === 'LOST_FOUND' ? 'var(--danger-light)' : 'var(--bg-surface)',
               color: postType === 'LOST_FOUND' ? 'var(--danger)' : 'var(--text-main)',
               fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.45rem',
             }}
           >
+            <PackageSearch size={18} strokeWidth={1.8} aria-hidden="true" />
             Lost & Found
           </button>
 
@@ -144,12 +151,17 @@ export const CreatePost = () => {
             style={{
               padding: '0.85rem 0.5rem',
               borderRadius: 'var(--radius-md)',
-              border: postType === 'MARKETPLACE' ? '2px solid #d97706' : '1px solid var(--border)',
-              background: postType === 'MARKETPLACE' ? '#fef3c7' : 'var(--bg-surface)',
-              color: postType === 'MARKETPLACE' ? '#b45309' : 'var(--text-main)',
+              border: postType === 'MARKETPLACE' ? '2px solid var(--warning)' : '1px solid var(--border)',
+              background: postType === 'MARKETPLACE' ? 'var(--warning-light)' : 'var(--bg-surface)',
+              color: postType === 'MARKETPLACE' ? '#8a6420' : 'var(--text-main)',
               fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.45rem',
             }}
           >
+            <ShoppingBag size={18} strokeWidth={1.8} aria-hidden="true" />
             Marketplace
           </button>
 
@@ -167,8 +179,13 @@ export const CreatePost = () => {
               background: postType === 'COLLABORATION' ? 'var(--primary-light)' : 'var(--bg-surface)',
               color: postType === 'COLLABORATION' ? 'var(--primary)' : 'var(--text-main)',
               fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.45rem',
             }}
           >
+            <Users size={18} strokeWidth={1.8} aria-hidden="true" />
             Collaboration
           </button>
         </div>
@@ -392,7 +409,9 @@ export const CreatePost = () => {
               type="submit"
               className="btn btn-primary"
               disabled={submitting}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
             >
+              <Plus size={16} strokeWidth={2} aria-hidden="true" />
               {submitting ? 'Publishing...' : 'Publish Listing'}
             </button>
           </div>

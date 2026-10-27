@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Clock, Tag } from 'lucide-react';
+import { MapPin, Clock, ArrowRight } from 'lucide-react';
 import { Badge } from './Badge';
 
 export const PostCard = ({ post }) => {
@@ -37,7 +37,7 @@ export const PostCard = ({ post }) => {
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
       {/* Thumbnail */}
-      <Link to={`/posts/${_id}`} style={{ position: 'relative', display: 'block', height: '190px', overflow: 'hidden', background: '#f1f5f9' }}>
+      <Link to={`/posts/${_id}`} style={{ position: 'relative', display: 'block', height: '190px', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
         <img
           src={imageUrl}
           alt={title}
@@ -55,7 +55,7 @@ export const PostCard = ({ post }) => {
 
           {type === 'MARKETPLACE' && (
             <>
-              <span className="badge" style={{ background: '#10b981', color: '#fff', border: 'none', fontWeight: 800 }}>
+              <span className="badge" style={{ background: 'var(--success)', color: '#fff', border: 'none', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                 ₹{details?.price !== undefined ? details.price : 'Free'}
               </span>
               {status !== 'ACTIVE' && <Badge status={status} />}
@@ -73,21 +73,21 @@ export const PostCard = ({ post }) => {
         </div>
 
         {/* Category tag */}
-        <div style={{ position: 'absolute', bottom: '0.75rem', right: '0.75rem', background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(4px)', color: '#fff', fontSize: '0.75rem', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-sm)', fontWeight: 600 }}>
+        <div style={{ position: 'absolute', bottom: '0.75rem', right: '0.75rem', background: 'rgba(38, 53, 36, 0.75)', backdropFilter: 'blur(4px)', color: '#fff', fontSize: '0.72rem', padding: '0.18rem 0.5rem', borderRadius: 'var(--radius-sm)', fontWeight: 600, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
           {category}
         </div>
       </Link>
 
       {/* Body */}
       <div style={{ padding: '1.15rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <Link to={`/posts/${_id}`}>
+        <Link to={`/posts/${_id}`} style={{ textDecoration: 'none' }}>
           <h3
             style={{
-              fontSize: '1.05rem',
+              fontSize: '1rem',
               fontWeight: 700,
               lineHeight: 1.35,
               marginBottom: '0.625rem',
-              color: 'var(--text-main)',
+              color: 'var(--forest)',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -100,15 +100,15 @@ export const PostCard = ({ post }) => {
         </Link>
 
         {/* Location & Time info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.85rem' }}>
           {location && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              <MapPin size={13} color="var(--primary)" />
+              <MapPin size={12} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
               <span>{location}</span>
             </div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginLeft: 'auto' }}>
-            <Clock size={13} />
+            <Clock size={13} strokeWidth={1.8} aria-hidden="true" />
             <span>{formatDate(createdAt)}</span>
           </div>
         </div>
@@ -142,9 +142,10 @@ export const PostCard = ({ post }) => {
 
           <Link
             to={`/posts/${_id}`}
-            style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary)' }}
+            style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary)', letterSpacing: '0.01em', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
           >
-            View →
+            <span>View</span>
+            <ArrowRight size={13} strokeWidth={2} aria-hidden="true" />
           </Link>
         </div>
       </div>

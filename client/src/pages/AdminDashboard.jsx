@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ShieldAlert,
-  CheckCircle,
-  XCircle,
+  ShieldCheck,
+  CheckCircle2,
+  X,
   Trash2,
   UserX,
   UserCheck,
   ExternalLink,
-  AlertTriangle,
+  Flag,
 } from 'lucide-react';
 import api from '../services/api';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -87,31 +87,14 @@ export const AdminDashboard = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '4rem' }}>
       {/* Header */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.5rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="page-hero" style={{ marginBottom: '2rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171', fontWeight: 800, fontSize: '0.85rem' }}>
-            <ShieldAlert size={20} />
-            <span>MODERATION HEADQUARTERS</span>
+          <div className="page-hero-label">
+            <ShieldCheck size={15} strokeWidth={1.8} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.35rem', color: 'var(--primary)' }} aria-hidden="true" />
+            Moderation Headquarters
           </div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            Admin Moderation Dashboard
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginTop: '0.4rem' }}>
-            Review student reports, take down inappropriate content, and enforce campus safety standards.
-          </p>
+          <h1>Admin Moderation Dashboard</h1>
+          <p>Review student reports, take down inappropriate content, and enforce campus safety standards.</p>
         </div>
       </div>
 
@@ -159,7 +142,7 @@ export const AdminDashboard = () => {
                     ? 'var(--danger)'
                     : report.status === 'REVIEWED'
                     ? 'var(--success)'
-                    : '#94a3b8'
+                    : 'var(--border-dark)'
                 }`,
               }}
             >
@@ -168,12 +151,13 @@ export const AdminDashboard = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.35rem' }}>
                     <span
                       style={{
-                        background: '#fee2e2',
+                        background: 'var(--danger-light)',
                         color: 'var(--danger)',
                         fontSize: '0.75rem',
                         fontWeight: 800,
                         padding: '0.2rem 0.6rem',
                         borderRadius: '4px',
+                        border: '1px solid #e8b8b4',
                       }}
                     >
                       {report.reason}
@@ -194,10 +178,10 @@ export const AdminDashboard = () => {
                       <button
                         onClick={() => handleUpdateStatus(report._id, 'REVIEWED')}
                         disabled={actionLoading}
-                        className="btn btn-sm"
-                        style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' }}
+                        className="btn btn-forest btn-sm"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                       >
-                        <CheckCircle size={14} />
+                        <CheckCircle2 size={14} strokeWidth={1.8} aria-hidden="true" />
                         <span>Mark Reviewed</span>
                       </button>
 
@@ -205,8 +189,9 @@ export const AdminDashboard = () => {
                         onClick={() => handleUpdateStatus(report._id, 'DISMISSED')}
                         disabled={actionLoading}
                         className="btn btn-secondary btn-sm"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                       >
-                        <XCircle size={14} />
+                        <X size={14} strokeWidth={1.8} aria-hidden="true" />
                         <span>Dismiss</span>
                       </button>
                     </>
@@ -223,7 +208,7 @@ export const AdminDashboard = () => {
 
               {/* Target Details Preview */}
               {report.targetData && (
-                <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', marginBottom: '1rem', background: '#fafafa' }}>
+                <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', marginBottom: '1rem', background: 'var(--bg-subtle)' }}>
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                     CONTENT PREVIEW
                   </div>
@@ -241,8 +226,9 @@ export const AdminDashboard = () => {
                           onClick={() => handleRemovePost(report._id, report.targetId)}
                           disabled={actionLoading}
                           className="btn btn-danger btn-sm"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" />
                           <span>Delete Post</span>
                         </button>
                       </div>
@@ -264,8 +250,9 @@ export const AdminDashboard = () => {
                             onClick={() => handleToggleUserStatus(report._id, report.targetId, false)}
                             disabled={actionLoading}
                             className="btn btn-danger btn-sm"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                           >
-                            <UserX size={14} />
+                            <UserX size={14} strokeWidth={1.8} aria-hidden="true" />
                             <span>Suspend User</span>
                           </button>
                         ) : (
@@ -273,8 +260,9 @@ export const AdminDashboard = () => {
                             onClick={() => handleToggleUserStatus(report._id, report.targetId, true)}
                             disabled={actionLoading}
                             className="btn btn-primary btn-sm"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                           >
-                            <UserCheck size={14} />
+                            <UserCheck size={14} strokeWidth={1.8} aria-hidden="true" />
                             <span>Reactivate User</span>
                           </button>
                         )}
@@ -293,7 +281,7 @@ export const AdminDashboard = () => {
         </div>
       ) : (
         <div className="card" style={{ padding: '3.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <CheckCircle size={40} color="var(--success)" style={{ margin: '0 auto 1rem' }} />
+          <CheckCircle2 size={40} strokeWidth={1.8} color="var(--success)" style={{ margin: '0 auto 1rem' }} aria-hidden="true" />
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem' }}>
             No reports in this category
           </h3>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, PlusCircle, Filter, X } from 'lucide-react';
+import { CalendarDays, Plus, SlidersHorizontal, X } from 'lucide-react';
 import api from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -90,39 +90,21 @@ export const Events = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
       {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #059669 0%, #065f46 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.5rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="page-hero">
         <div style={{ maxWidth: '640px' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#a7f3d0', letterSpacing: '0.05em' }}>
-            Campus Calendar
-          </span>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            Campus Events & Announcements
-          </h1>
-          <p style={{ color: '#d1fae5', fontSize: '0.95rem', marginTop: '0.4rem', lineHeight: 1.5 }}>
-            Discover workshops, hackathons, sports tournaments, and official administrative notices from Apex Institute of Technology.
+          <div className="page-hero-label">Campus Calendar</div>
+          <h1>Campus Events & Announcements</h1>
+          <p>
+            Discover workshops, hackathons, sports tournaments, and official administrative notices from Scaler School of Technology.
           </p>
         </div>
 
         {isAdmin && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-lg"
-            style={{ background: '#ffffff', color: '#065f46', fontWeight: 700 }}
+            className="btn btn-primary btn-lg"
           >
-            <PlusCircle size={20} />
+            <Plus size={18} strokeWidth={2} aria-hidden="true" />
             <span>Publish Official Event</span>
           </button>
         )}
@@ -140,9 +122,10 @@ export const Events = () => {
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: '0.5rem' }}>
-            Categories:
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, marginRight: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
+            <span>Categories:</span>
+          </div>
           {categories.map((cat) => (
             <button
               key={cat}
@@ -166,6 +149,7 @@ export const Events = () => {
         </div>
       ) : (
         <EmptyState
+          icon={CalendarDays}
           title="No events scheduled in this category"
           description="Check back soon for upcoming campus notices, workshops, or club inductions."
         />
@@ -211,8 +195,12 @@ export const Events = () => {
               }}
             >
               <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Publish Official Event</h3>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: 'var(--text-muted)' }}>
-                <X size={20} />
+              <button
+                onClick={() => setIsModalOpen(false)}
+                aria-label="Close publish event modal"
+                style={{ color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0.25rem' }}
+              >
+                <X size={20} strokeWidth={1.8} aria-hidden="true" />
               </button>
             </div>
 

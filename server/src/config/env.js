@@ -9,8 +9,8 @@ export const ENV = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
   COOKIE_NAME: process.env.COOKIE_NAME || 'campusconnect_token',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
-  COLLEGE_NAME: process.env.COLLEGE_NAME || 'Apex Institute of Technology',
-  COLLEGE_EMAIL_DOMAIN: (process.env.COLLEGE_EMAIL_DOMAIN || 'campus.edu').toLowerCase().trim(),
+  COLLEGE_NAME: process.env.COLLEGE_NAME || 'Scaler School of Technology',
+  COLLEGE_EMAIL_DOMAIN: (process.env.COLLEGE_EMAIL_DOMAIN || 'all').toLowerCase().trim(),
 };
 
 // Fail fast in production if required vars missing

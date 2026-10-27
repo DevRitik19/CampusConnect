@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Send,
-  MessageSquare,
+  MessageCircle,
   ArrowLeft,
   Layers,
   Clock,
@@ -388,6 +388,7 @@ export const Messages = () => {
                   type="submit"
                   disabled={!newMessageText.trim() || sending}
                   className="btn btn-primary"
+                  aria-label="Send message"
                   style={{
                     width: '2.75rem',
                     height: '2.75rem',
@@ -396,13 +397,13 @@ export const Messages = () => {
                     flexShrink: 0,
                   }}
                 >
-                  <Send size={16} />
+                  <Send size={16} strokeWidth={1.8} aria-hidden="true" />
                 </button>
               </form>
             </>
           ) : (
             <div style={{ margin: 'auto', textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-              <MessageSquare size={48} style={{ opacity: 0.3, margin: '0 auto 1rem' }} />
+              <MessageCircle size={48} strokeWidth={1.8} style={{ opacity: 0.3, margin: '0 auto 1rem' }} aria-hidden="true" />
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.5rem' }}>
                 Select a conversation
               </h3>

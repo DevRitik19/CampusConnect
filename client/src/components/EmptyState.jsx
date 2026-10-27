@@ -1,9 +1,9 @@
 import React from 'react';
-import { FolderSearch, Plus } from 'lucide-react';
+import { PackageSearch, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const EmptyState = ({
-  icon: Icon = FolderSearch,
+  icon: Icon = PackageSearch,
   title = 'No listings found',
   description = 'Try adjusting your search filters or check back later for new campus posts.',
   actionText,
@@ -35,7 +35,7 @@ export const EmptyState = ({
           margin: '0 auto 1.25rem',
         }}
       >
-        <Icon size={28} />
+        <Icon size={28} strokeWidth={1.8} aria-hidden="true" />
       </div>
       <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-main)' }}>
         {title}
@@ -46,7 +46,7 @@ export const EmptyState = ({
 
       {actionText && actionLink && (
         <Link to={actionLink} className="btn btn-primary btn-sm">
-          <Plus size={16} />
+          <Plus size={16} strokeWidth={2} aria-hidden="true" />
           {actionText}
         </Link>
       )}

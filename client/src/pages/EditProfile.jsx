@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, CircleAlert } from 'lucide-react';
 import api from '../services/api';
 
 export const EditProfile = () => {
@@ -52,8 +52,9 @@ export const EditProfile = () => {
         onClick={() => navigate(-1)}
         className="btn btn-secondary btn-sm"
         style={{ marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+        aria-label="Back to previous page"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.8} aria-hidden="true" />
         Back
       </button>
 
@@ -66,14 +67,16 @@ export const EditProfile = () => {
         </p>
 
         {error && (
-          <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            {error}
+          <div style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CircleAlert size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 
         {success && (
-          <div style={{ background: 'var(--success-light)', color: 'var(--success)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            Profile updated successfully! Redirecting...
+          <div style={{ background: 'var(--success-light)', color: 'var(--success)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span>Profile updated successfully! Redirecting...</span>
           </div>
         )}
 
@@ -157,8 +160,9 @@ export const EditProfile = () => {
               type="submit"
               className="btn btn-primary"
               disabled={saving}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
             >
-              <Save size={16} />
+              <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" />
               <span>{saving ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>

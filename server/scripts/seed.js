@@ -68,6 +68,33 @@ const seedDatabase = async () => {
       isActive: true,
     });
 
+    // Scaler domain alias accounts
+    await User.create({
+      name: 'Campus Dean Office (Admin)',
+      email: 'admin@scaler.com',
+      passwordHash: defaultPasswordHash,
+      department: 'Dean of Student Affairs',
+      year: 'Faculty/Staff',
+      bio: 'Official Scaler School of Technology administrative office.',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      role: 'ADMIN',
+      isEmailVerified: true,
+      isActive: true,
+    });
+
+    await User.create({
+      name: 'Arjun Sharma',
+      email: 'arjun@scaler.com',
+      passwordHash: defaultPasswordHash,
+      department: 'Computer Science & Engineering',
+      year: '3rd Year',
+      bio: 'Tech enthusiast, competitive coder, and guitar player.',
+      avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150',
+      role: 'STUDENT',
+      isEmailVerified: true,
+      isActive: true,
+    });
+
     const studentPriya = await User.create({
       name: 'Priya Patel',
       email: 'priya@campus.edu',
@@ -202,13 +229,13 @@ const seedDatabase = async () => {
     await Event.create([
       {
         author: adminUser._id,
-        title: 'HackApex 2026: Annual Inter-College 36hr Hackathon',
-        description: 'The flagship hackathon of Apex Institute is back! Compete in AI, Web3, Smart Cities, and Healthcare tracks with prizes over ₹1,50,000. Mentorship from top tech leaders and hiring opportunities for top performers.',
+        title: 'HackScaler 2026: Annual Inter-College 36hr Hackathon',
+        description: 'The flagship hackathon of Scaler School of Technology is back! Compete in AI, Web3, Smart Cities, and Healthcare tracks with prizes over ₹1,50,000. Mentorship from top tech leaders and hiring opportunities for top performers.',
         category: 'Hackathon',
         venue: 'Campus Innovation Center, Auditorium',
         startsAt: new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000), // in 4 days
         endsAt: new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000),
-        registrationUrl: 'https://hackapex2026.example.org',
+        registrationUrl: 'https://hackscaler.example.org',
         imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800',
         status: 'PUBLISHED',
       },

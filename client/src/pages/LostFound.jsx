@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, MapPin, PlusCircle, Filter } from 'lucide-react';
+import { Search, MapPin, Plus, SlidersHorizontal, PackageSearch } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -53,38 +53,20 @@ export const LostFound = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
       {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.5rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="page-hero">
         <div style={{ maxWidth: '640px' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#fecaca', letterSpacing: '0.05em' }}>
-            Campus Desk
-          </span>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            Lost & Found Hub
-          </h1>
-          <p style={{ color: '#fee2e2', fontSize: '0.95rem', marginTop: '0.4rem', lineHeight: 1.5 }}>
+          <div className="page-hero-label">Campus Desk</div>
+          <h1>Lost & Found Hub</h1>
+          <p>
             Lost your calculator, ID card, or hostel keys? Or found something on a bench? Post notices and help batchmates recover their belongings safely.
           </p>
         </div>
 
         <Link
           to="/create-post?type=LOST_FOUND"
-          className="btn btn-lg"
-          style={{ background: '#ffffff', color: '#b91c1c', fontWeight: 700 }}
+          className="btn btn-primary btn-lg"
         >
-          <PlusCircle size={20} />
+          <Plus size={18} strokeWidth={2} aria-hidden="true" />
           <span>Report Lost/Found Item</span>
         </Link>
       </div>
@@ -102,7 +84,11 @@ export const LostFound = () => {
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Lost vs Found switch */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, marginRight: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
+              <span>Status:</span>
+            </div>
             <button
               onClick={() => setItemStateFilter('')}
               className={`btn btn-sm ${itemStateFilter === '' ? 'btn-primary' : 'btn-secondary'}`}
@@ -117,8 +103,7 @@ export const LostFound = () => {
             </button>
             <button
               onClick={() => setItemStateFilter('FOUND')}
-              className={`btn btn-sm ${itemStateFilter === 'FOUND' ? 'btn-primary' : 'btn-secondary'}`}
-              style={itemStateFilter === 'FOUND' ? { background: '#10b981', borderColor: '#10b981' } : {}}
+              className={`btn btn-sm ${itemStateFilter === 'FOUND' ? 'btn-forest' : 'btn-secondary'}`}
             >
               Found Items
             </button>
@@ -127,7 +112,7 @@ export const LostFound = () => {
           {/* Search inputs */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <Search size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search items..."
@@ -138,7 +123,7 @@ export const LostFound = () => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <MapPin size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+              <MapPin size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Filter by location (e.g. Library)..."
@@ -152,6 +137,7 @@ export const LostFound = () => {
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               className="form-control"
+              aria-label="Filter by category"
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
             >
               {categories.map((c) => (
@@ -175,6 +161,7 @@ export const LostFound = () => {
         </div>
       ) : (
         <EmptyState
+          icon={PackageSearch}
           title="No lost or found items recorded"
           description="Everything seems to be right where it belongs! If you found an item or lost something, publish a notice."
           actionText="Publish Lost/Found Notice"

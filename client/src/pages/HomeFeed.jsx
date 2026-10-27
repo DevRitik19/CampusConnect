@@ -3,10 +3,9 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Search,
-  Filter,
-  PlusCircle,
+  SlidersHorizontal,
+  Plus,
   RefreshCw,
-  Tag,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -81,35 +80,14 @@ export const HomeFeed = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
       {/* Top Banner & Greetings */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.25rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-          boxShadow: 'var(--shadow-lg)',
-        }}
-      >
+      <div className="page-hero">
         <div>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#c7d2fe', letterSpacing: '0.05em' }}>
-            Campus Live Feed
-          </span>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            {user ? `Welcome back, ${user.name.split(' ')[0]}!` : 'CampusConnect Community Feed'}
-          </h1>
-          <p style={{ color: '#e0e7ff', fontSize: '0.95rem', marginTop: '0.4rem' }}>
-            Check out what students at Apex Institute are sharing, searching for, and collaborating on right now.
-          </p>
+          <div className="page-hero-label">Campus Live Feed</div>
+          <h1>{user ? `Welcome back, ${user.name.split(' ')[0]}!` : 'CampusConnect Community Feed'}</h1>
+          <p>Check out what students at Scaler School of Technology are sharing, searching for, and collaborating on right now.</p>
         </div>
-
-        <Link to="/create-post" className="btn btn-lg" style={{ background: '#ffffff', color: 'var(--primary)', fontWeight: 700, boxShadow: 'var(--shadow-md)' }}>
-          <PlusCircle size={20} />
+        <Link to="/create-post" className="btn btn-primary btn-lg">
+          <Plus size={18} strokeWidth={2} aria-hidden="true" />
           <span>Publish New Listing</span>
         </Link>
       </div>
@@ -127,7 +105,11 @@ export const HomeFeed = () => {
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Post Type Tabs */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, marginRight: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
+              <span>Filter:</span>
+            </div>
             <button
               onClick={() => updateFilter('type', '')}
               className={`btn btn-sm ${!selectedType ? 'btn-primary' : 'btn-secondary'}`}
@@ -157,7 +139,7 @@ export const HomeFeed = () => {
           {/* Search Input & Sort Dropdown */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
             <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <Search size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search listings..."
@@ -171,6 +153,7 @@ export const HomeFeed = () => {
               value={selectedSort}
               onChange={(e) => updateFilter('sort', e.target.value)}
               className="form-control"
+              aria-label="Sort listings"
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
             >
               <option value="newest">Newest First</option>
@@ -182,10 +165,11 @@ export const HomeFeed = () => {
             <button
               onClick={fetchFeed}
               title="Refresh Feed"
+              aria-label="Refresh Feed"
               className="btn btn-secondary btn-sm"
               style={{ padding: '0.5rem' }}
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={16} strokeWidth={1.8} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -217,8 +201,9 @@ export const HomeFeed = () => {
                 disabled={!pagination.hasPrevPage}
                 onClick={() => updateFilter('page', (currentPage - 1).toString())}
                 className="btn btn-secondary btn-sm"
+                aria-label="Previous page"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={16} strokeWidth={1.8} aria-hidden="true" />
                 Previous
               </button>
               <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-muted)' }}>
@@ -228,9 +213,10 @@ export const HomeFeed = () => {
                 disabled={!pagination.hasNextPage}
                 onClick={() => updateFilter('page', (currentPage + 1).toString())}
                 className="btn btn-secondary btn-sm"
+                aria-label="Next page"
               >
                 Next
-                <ChevronRight size={16} />
+                <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" />
               </button>
             </div>
           )}

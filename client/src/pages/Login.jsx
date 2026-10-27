@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Layers, ArrowRight, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import { Layers, ArrowRight, ShieldCheck, Sparkles, CircleAlert } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,12 +29,12 @@ export const Login = () => {
 
   // Quick fill demo accounts
   const fillDemoStudent = () => {
-    setEmail('arjun@campus.edu');
+    setEmail('arjun@scaler.com');
     setPassword('Campus@123');
   };
 
   const fillDemoAdmin = () => {
-    setEmail('admin@campus.edu');
+    setEmail('admin@scaler.com');
     setPassword('Campus@123');
   };
 
@@ -60,23 +60,23 @@ export const Login = () => {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
             style={{
-              background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+              background: 'var(--forest)',
               color: '#fff',
-              width: '3.25rem',
-              height: '3.25rem',
-              borderRadius: '12px',
+              width: '3rem',
+              height: '3rem',
+              borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1rem',
-              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)',
+              boxShadow: '0 4px 12px rgba(38, 53, 36, 0.25)',
             }}
           >
-            <Layers size={28} />
+            <Layers size={26} strokeWidth={1.8} aria-hidden="true" />
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Welcome Back</h1>
+          <h1 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--forest)' }}>Welcome Back</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
-            Log in to your verified Apex Institute account
+            Log in to your verified Scaler School of Technology account
           </p>
         </div>
 
@@ -95,18 +95,18 @@ export const Login = () => {
               border: '1px solid #fecaca',
             }}
           >
-            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <CircleAlert size={18} strokeWidth={1.8} style={{ flexShrink: 0 }} aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label">College Email</label>
+            <label className="form-label">Email Address</label>
             <input
               type="email"
               required
-              placeholder="e.g. yourname@campus.edu"
+              placeholder="e.g. yourname@scaler.com or email@gmail.com"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -129,10 +129,10 @@ export const Login = () => {
             type="submit"
             disabled={submitting}
             className="btn btn-primary btn-lg"
-            style={{ width: '100%', marginTop: '0.75rem' }}
+            style={{ width: '100%', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
-            {submitting ? 'Signing In...' : 'Sign In'}
-            <ArrowRight size={16} />
+            <span>{submitting ? 'Signing In...' : 'Sign In'}</span>
+            <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
           </button>
         </form>
 
@@ -145,8 +145,8 @@ export const Login = () => {
             textAlign: 'center',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-            <Sparkles size={14} color="var(--primary)" />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+            <Sparkles size={13} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
             <span>Quick-Fill Demonstration Accounts</span>
           </div>
 

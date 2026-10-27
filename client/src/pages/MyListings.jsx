@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Layers,
-  PlusCircle,
-  Edit,
+  Plus,
+  Pencil,
   Trash2,
-  CheckCircle,
+  CheckCircle2,
   ExternalLink,
   MapPin,
   Clock,
@@ -75,7 +75,7 @@ export const MyListings = () => {
         </div>
 
         <Link to="/create-post" className="btn btn-primary">
-          <PlusCircle size={18} />
+          <Plus size={18} strokeWidth={2} aria-hidden="true" />
           <span>Publish New Listing</span>
         </Link>
       </div>
@@ -97,7 +97,7 @@ export const MyListings = () => {
               }}
             >
               {/* Thumbnail */}
-              <div style={{ height: '100px', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: '#f1f5f9' }}>
+              <div style={{ height: '100px', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
                 <img
                   src={
                     post.images && post.images.length > 0
@@ -126,18 +126,18 @@ export const MyListings = () => {
                   </h3>
                 </Link>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', flexWrap: 'gap', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   {post.details?.price !== undefined && (
-                    <span style={{ fontWeight: 800, color: '#10b981' }}>₹{post.details.price}</span>
+                    <span className="mono" style={{ fontWeight: 700, color: 'var(--forest)' }}>₹{post.details.price}</span>
                   )}
                   {post.location && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <MapPin size={13} />
+                      <MapPin size={13} strokeWidth={1.8} aria-hidden="true" />
                       <span>{post.location}</span>
                     </div>
                   )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Clock size={13} />
+                    <Clock size={13} strokeWidth={1.8} aria-hidden="true" />
                     <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -150,10 +150,10 @@ export const MyListings = () => {
                     {post.type === 'LOST_FOUND' && (
                       <button
                         onClick={() => handleStatusChange(post._id, 'RESOLVED')}
-                        className="btn btn-sm"
-                        style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' }}
+                        className="btn btn-sm btn-forest"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                       >
-                        <CheckCircle size={14} />
+                        <CheckCircle2 size={14} strokeWidth={1.8} aria-hidden="true" />
                         <span>Mark Recovered</span>
                       </button>
                     )}
@@ -161,10 +161,10 @@ export const MyListings = () => {
                     {post.type === 'MARKETPLACE' && (
                       <button
                         onClick={() => handleStatusChange(post._id, 'SOLD')}
-                        className="btn btn-sm"
-                        style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' }}
+                        className="btn btn-sm btn-forest"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                       >
-                        <CheckCircle size={14} />
+                        <CheckCircle2 size={14} strokeWidth={1.8} aria-hidden="true" />
                         <span>Mark as Sold</span>
                       </button>
                     )}
@@ -189,9 +189,9 @@ export const MyListings = () => {
                   <Link
                     to={`/edit-post/${post._id}`}
                     className="btn btn-secondary btn-sm"
-                    style={{ flex: 1, justifyContent: 'center' }}
+                    style={{ flex: 1, justifyContent: 'center', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                   >
-                    <Edit size={14} />
+                    <Pencil size={14} strokeWidth={1.8} aria-hidden="true" />
                     <span>Edit</span>
                   </Link>
 
@@ -199,9 +199,10 @@ export const MyListings = () => {
                     onClick={() => handleDelete(post._id)}
                     className="btn btn-danger btn-sm"
                     style={{ padding: '0.4rem 0.6rem' }}
+                    aria-label="Delete listing"
                     title="Delete post"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" />
                   </button>
                 </div>
               </div>

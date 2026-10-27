@@ -6,6 +6,33 @@ CampusConnect is a production-conscious, full-stack MERN web application enginee
 
 ---
 
+## 📌 Submission & Evaluator Information
+
+| Resource | URL / Details |
+| :--- | :--- |
+| **GitHub Repository** | [https://github.com/DevRitik19/CampusConnect](https://github.com/DevRitik19/CampusConnect) |
+| **Local Frontend Client** | `http://localhost:5173` |
+| **Local Backend API** | `http://localhost:5000/api` |
+| **Live Web Deployment** | Configured for Vercel (Client) + Render (Server) — see [Deployment Section](#10-deployment-instructions) |
+| **Demo Walkthrough Video** | Included in project submission package |
+
+### ✅ Pre-Submission Verification Checklist
+- [x] **Final Source Code**: Fully available in this repository with clean commit history.
+- [x] **Accessible Build**: Production build passing (`vite build` -> 0 errors, gzip-optimized chunks).
+- [x] **Documentation**: Complete architectural overview, database schemas, local setup, API reference, and security breakdown.
+- [x] **Major Workflows Covered**:
+  - Verified Authentication (Student & Administrator roles with quick-fill demo buttons)
+  - Lost & Found reporting, claiming, and resolution workflows
+  - Student Marketplace with INR (₹) pricing, condition filters, and contact actions
+  - Study Pods & Hackathon team partner matching
+  - Campus Event & Workshop calendar with interactive bookmarking
+  - 2-pane direct messaging with automatic synchronization
+  - Moderation headquarters with post takedown and user suspension tools
+- [x] **Secret Exposure Prevention**: All `.env` files, API keys, and credential stores are strictly excluded via `.gitignore`; only non-sensitive `.env.example` templates are provided.
+- [x] **UI Polish & Accessibility**: Consistent Lucide React outline icon system with accessible `aria-label` tags, `aria-hidden` attributes, and responsive mobile layouts.
+
+---
+
 ## 1. Project Overview & Problem Statement
 
 College students frequently rely on scattered, ephemeral WhatsApp groups, crowded notice boards, and unorganized social media pages to find lost belongings, exchange used textbooks, locate project teammates, or learn about university events. Crucial notices are easily buried under chat noise, and contact details are unsafely broadcast.
@@ -248,10 +275,10 @@ CampusConnect/
 
 | Role | Email | Password | Purpose |
 | :--- | :--- | :--- | :--- |
-| **Student** | `arjun@campus.edu` | `Campus@123` | Active student with listings and messages |
+| **Student** | `arjun@scaler.com` / `arjun@campus.edu` | `Campus@123` | Active student with listings and messages |
 | **Student** | `priya@campus.edu` | `Campus@123` | Active student with lost & found / study notices |
 | **Student** | `rohan@campus.edu` | `Campus@123` | Active student with marketplace textbook |
-| **Administrator** | `admin@campus.edu` | `Campus@123` | Official events management & report moderation |
+| **Administrator** | `admin@scaler.com` / `admin@campus.edu` | `Campus@123` | Official events management & report moderation |
 
 > **Convenience Feature**: The login page (`/login`) includes one-click **Quick-Fill Demo Account** buttons for immediate evaluation.
 

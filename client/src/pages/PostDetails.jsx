@@ -4,17 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import {
   MapPin,
   Clock,
-  MessageSquare,
+  Send,
   Bookmark,
   Share2,
-  AlertTriangle,
-  Edit,
+  Heart,
+  Flag,
+  Pencil,
   Trash2,
-  CheckCircle,
+  CheckCircle2,
   Tag,
-  ChevronLeft,
-  User as UserIcon,
-  PhoneCall,
+  ArrowLeft,
+  UserRound,
+  Smartphone,
 } from 'lucide-react';
 import api from '../services/api';
 import { Badge } from '../components/Badge';
@@ -30,7 +31,9 @@ export const PostDetails = () => {
   const [error, setError] = useState(null);
 
   const [isSaved, setIsSaved] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
 
@@ -105,6 +108,22 @@ export const PostDetails = () => {
       console.error('Failed to toggle save:', err);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    setIsFavorite((prev) => !prev);
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (err) {
+      console.warn('Failed to copy link', err);
     }
   };
 
@@ -188,9 +207,10 @@ export const PostDetails = () => {
       <button
         onClick={() => navigate(-1)}
         className="btn btn-secondary btn-sm"
+        aria-label="Back to previous page"
         style={{ marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
       >
-        <ChevronLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.8} aria-hidden="true" />
         Back
       </button>
 
@@ -198,7 +218,7 @@ export const PostDetails = () => {
         {/* Left Column: Post Details */}
         <div>
           {/* Main Photo Banner */}
-          <div style={{ position: 'relative', height: '380px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', background: '#e2e8f0', marginBottom: '1.75rem', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ position: 'relative', height: '380px', borderRadius: 'var(--radius-xl)', overflow: 'hidden', background: 'var(--bg-secondary)', marginBottom: '1.75rem', boxShadow: 'var(--shadow-md)' }}>
             <img
               src={mainImage}
               alt={title}
@@ -212,7 +232,7 @@ export const PostDetails = () => {
               )}
               {type === 'MARKETPLACE' && (
                 <>
-                  <span className="badge" style={{ background: '#10b981', color: '#fff', fontSize: '0.9rem', padding: '0.4rem 0.85rem', fontWeight: 800 }}>
+                  <span className="badge" style={{ background: 'var(--forest)', color: '#fff', fontSize: '0.9rem', padding: '0.4rem 0.85rem', fontWeight: 800 }}>
                     ₹{details?.price !== undefined ? details.price : 'Free'}
                   </span>
                   {status !== 'ACTIVE' && <Badge status={status} />}
@@ -235,14 +255,14 @@ export const PostDetails = () => {
               <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{category}</span>
               <span>•</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <Clock size={14} />
+                <Clock size={14} strokeWidth={1.8} aria-hidden="true" />
                 <span>Posted {new Date(createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
               </div>
               {location && (
                 <>
                   <span>•</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <MapPin size={14} color="var(--primary)" />
+                    <MapPin size={14} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
                     <span>{location}</span>
                   </div>
                 </>
@@ -312,7 +332,7 @@ export const PostDetails = () => {
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.35rem' }}>SKILLS NEEDED</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                       {details.skills.map((skill, i) => (
-                        <span key={i} style={{ background: '#e0e7ff', color: 'var(--primary)', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', fontWeight: 600 }}>
+                        <span key={i} style={{ background: 'var(--forest-light)', color: 'var(--forest)', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', fontWeight: 600 }}>
                           {skill}
                         </span>
                       ))}
@@ -357,11 +377,11 @@ export const PostDetails = () => {
                 {type === 'LOST_FOUND' && status === 'ACTIVE' && (
                   <button
                     onClick={() => handleStatusChange('RESOLVED')}
-                    className="btn btn-primary"
+                    className="btn btn-forest"
                     disabled={actionLoading}
-                    style={{ width: '100%', background: '#10b981' }}
+                    style={{ width: '100%' }}
                   >
-                    <CheckCircle size={16} />
+                    <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" />
                     <span>Mark as Recovered / Resolved</span>
                   </button>
                 )}
@@ -369,11 +389,11 @@ export const PostDetails = () => {
                 {type === 'MARKETPLACE' && status === 'ACTIVE' && (
                   <button
                     onClick={() => handleStatusChange('SOLD')}
-                    className="btn btn-primary"
+                    className="btn btn-forest"
                     disabled={actionLoading}
-                    style={{ width: '100%', background: '#10b981' }}
+                    style={{ width: '100%' }}
                   >
-                    <CheckCircle size={16} />
+                    <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" />
                     <span>Mark as Sold</span>
                   </button>
                 )}
@@ -405,7 +425,7 @@ export const PostDetails = () => {
                   className="btn btn-secondary"
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  <Edit size={16} />
+                  <Pencil size={16} strokeWidth={1.8} aria-hidden="true" />
                   <span>Edit Details</span>
                 </Link>
 
@@ -415,19 +435,19 @@ export const PostDetails = () => {
                   disabled={actionLoading}
                   style={{ width: '100%' }}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={16} strokeWidth={1.8} aria-hidden="true" />
                   <span>Delete Listing</span>
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <button
                   onClick={handleContactAuthor}
                   disabled={actionLoading || status !== 'ACTIVE'}
                   className="btn btn-primary btn-lg"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  <MessageSquare size={18} />
+                  <Send size={18} strokeWidth={1.8} aria-hidden="true" />
                   <span>Message Author</span>
                 </button>
 
@@ -435,18 +455,46 @@ export const PostDetails = () => {
                   onClick={handleToggleSave}
                   disabled={saving}
                   className="btn btn-secondary"
+                  aria-label={isSaved ? 'Remove from saved bookmarks' : 'Save to bookmarks'}
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  <Bookmark size={16} fill={isSaved ? 'currentColor' : 'none'} />
+                  <Bookmark size={16} strokeWidth={1.8} fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
                   <span>{isSaved ? 'Saved in Bookmarks' : 'Save to Bookmarks'}</span>
+                </button>
+
+                <button
+                  onClick={handleToggleFavorite}
+                  className="btn btn-secondary"
+                  aria-label={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <Heart
+                    size={16}
+                    strokeWidth={1.8}
+                    fill={isFavorite ? 'var(--primary)' : 'none'}
+                    color={isFavorite ? 'var(--primary)' : 'currentColor'}
+                    aria-hidden="true"
+                  />
+                  <span>{isFavorite ? 'In Wishlist' : 'Add to Wishlist'}</span>
+                </button>
+
+                <button
+                  onClick={handleShare}
+                  className="btn btn-secondary"
+                  aria-label="Share listing link"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <Share2 size={16} strokeWidth={1.8} aria-hidden="true" />
+                  <span>{copied ? 'Link Copied!' : 'Share Listing'}</span>
                 </button>
 
                 <button
                   onClick={() => setReportModalOpen(true)}
                   className="btn btn-sm"
-                  style={{ color: 'var(--text-muted)', justifyContent: 'center', marginTop: '0.5rem' }}
+                  aria-label="Report this listing"
+                  style={{ color: 'var(--text-muted)', justifyContent: 'center', marginTop: '0.35rem' }}
                 >
-                  <AlertTriangle size={14} color="var(--danger)" />
+                  <Flag size={14} strokeWidth={1.8} color="var(--danger)" aria-hidden="true" />
                   <span>Report this listing</span>
                 </button>
               </div>
@@ -468,7 +516,7 @@ export const PostDetails = () => {
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{author?.name}</h3>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  {author?.department || 'Apex Institute Student'}
+                  {author?.department || 'Scaler School of Technology Student'}
                 </div>
                 {author?.year && (
                   <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>
@@ -478,12 +526,30 @@ export const PostDetails = () => {
               </div>
             </div>
 
+            {/* Direct Mobile & Safe Connect Tag */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                fontSize: '0.76rem',
+                color: 'var(--text-muted)',
+                marginBottom: '1rem',
+                padding: '0.5rem 0.75rem',
+                background: 'var(--bg-subtle)',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              <Smartphone size={14} strokeWidth={1.8} color="var(--forest)" aria-hidden="true" />
+              <span>Campus Verified Mobile Direct</span>
+            </div>
+
             <Link
               to={`/profile/${author?._id}`}
               className="btn btn-secondary btn-sm"
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              <UserIcon size={14} />
+              <UserRound size={14} strokeWidth={1.8} aria-hidden="true" />
               <span>View Public Profile</span>
             </Link>
           </div>

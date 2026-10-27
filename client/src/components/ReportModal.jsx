@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, Flag, CheckCircle2, CircleAlert } from 'lucide-react';
 import api from '../services/api';
 
 export const ReportModal = ({ isOpen, onClose, targetType, targetId, targetTitle }) => {
@@ -74,13 +74,17 @@ export const ReportModal = ({ isOpen, onClose, targetType, targetId, targetTitle
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)' }}>
-            <AlertTriangle size={20} />
+            <Flag size={20} strokeWidth={1.8} aria-hidden="true" />
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
               Report Content
             </h3>
           </div>
-          <button onClick={onClose} style={{ color: 'var(--text-muted)', padding: '0.25rem' }}>
-            <X size={20} />
+          <button
+            onClick={onClose}
+            aria-label="Close report modal"
+            style={{ color: 'var(--text-muted)', padding: '0.25rem', background: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
+            <X size={20} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
 
@@ -100,7 +104,7 @@ export const ReportModal = ({ isOpen, onClose, targetType, targetId, targetTitle
                 margin: '0 auto 1rem',
               }}
             >
-              <ShieldCheck size={30} />
+              <CheckCircle2 size={30} strokeWidth={1.8} aria-hidden="true" />
             </div>
             <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>
               Report Received

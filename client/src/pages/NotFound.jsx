@@ -28,7 +28,7 @@ export const NotFound = () => {
           marginBottom: '1.5rem',
         }}
       >
-        <Compass size={40} />
+        <Compass size={40} strokeWidth={1.8} aria-hidden="true" />
       </div>
       <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.5rem' }}>
         404

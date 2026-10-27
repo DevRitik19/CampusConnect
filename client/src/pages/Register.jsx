@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Layers, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Layers, ArrowRight, ShieldCheck, CircleAlert } from 'lucide-react';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -21,8 +21,8 @@ export const Register = () => {
     e.preventDefault();
     setError(null);
 
-    if (!email.toLowerCase().endsWith('@campus.edu')) {
-      setError('Please use your official college email ending with @campus.edu');
+    if (!email || !email.includes('@')) {
+      setError('Please provide a valid email address.');
       return;
     }
 
@@ -71,23 +71,23 @@ export const Register = () => {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
             style={{
-              background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+              background: 'var(--forest)',
               color: '#fff',
-              width: '3.25rem',
-              height: '3.25rem',
-              borderRadius: '12px',
+              width: '3rem',
+              height: '3rem',
+              borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1rem',
-              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)',
+              boxShadow: '0 4px 12px rgba(38, 53, 36, 0.25)',
             }}
           >
-            <Layers size={28} />
+            <Layers size={28} strokeWidth={1.8} aria-hidden="true" />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Create Student Account</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.35rem' }}>
-            Join the verified Apex Institute of Technology campus network
+            Join the verified Scaler School of Technology campus network
           </p>
         </div>
 
@@ -106,7 +106,7 @@ export const Register = () => {
               border: '1px solid #fecaca',
             }}
           >
-            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <CircleAlert size={18} strokeWidth={1.8} style={{ flexShrink: 0 }} aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}
@@ -125,17 +125,17 @@ export const Register = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">College Email Address *</label>
+            <label className="form-label">Email Address *</label>
             <input
               type="email"
               required
-              placeholder="e.g. aman@campus.edu"
+              placeholder="e.g. aman@scaler.com or student@gmail.com"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <span className="form-hint">
-              Registration is restricted to college students with <code>@campus.edu</code> domain.
+              Open to all students. You can register using any valid email address.
             </span>
           </div>
 
@@ -201,10 +201,10 @@ export const Register = () => {
             type="submit"
             disabled={submitting}
             className="btn btn-primary btn-lg"
-            style={{ width: '100%', marginTop: '0.75rem' }}
+            style={{ width: '100%', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
-            {submitting ? 'Creating Account...' : 'Complete Registration'}
-            <ArrowRight size={16} />
+            <span>{submitting ? 'Creating Account...' : 'Complete Registration'}</span>
+            <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
           </button>
         </form>
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { Navbar } from './components/Navbar';
+import { Sidebar, TopBar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
 // Pages
@@ -71,114 +71,125 @@ const GuestRoute = ({ children }) => {
 };
 
 export const App = () => {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              {/* Public Discovery Routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/feed" element={<HomeFeed />} />
-              <Route path="/lost-found" element={<LostFound />} />
-              <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/collaborate" element={<Collaborate />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/posts/:id" element={<PostDetails />} />
-              <Route path="/profile/:id" element={<Profile />} />
+        <div className="devtrack-app-shell">
+          <Sidebar
+            isOpen={mobileSidebarOpen}
+            onClose={() => setMobileSidebarOpen(false)}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+          />
+          <div className="devtrack-main-layout">
+            <TopBar onToggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+            <main className="main-content">
+              <Routes>
+                {/* Public Discovery Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/feed" element={<HomeFeed />} />
+                <Route path="/lost-found" element={<LostFound />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/collaborate" element={<Collaborate />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/posts/:id" element={<PostDetails />} />
+                <Route path="/profile/:id" element={<Profile />} />
 
-              {/* Guest Authentication Routes */}
-              <Route
-                path="/login"
-                element={
-                  <GuestRoute>
-                    <Login />
-                  </GuestRoute>
-                }
-              />
-              <Route
-                path="/register"
-                element={
-                  <GuestRoute>
-                    <Register />
-                  </GuestRoute>
-                }
-              />
+                {/* Guest Authentication Routes */}
+                <Route
+                  path="/login"
+                  element={
+                    <GuestRoute>
+                      <Login />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <GuestRoute>
+                      <Register />
+                    </GuestRoute>
+                  }
+                />
 
-              {/* Protected Student Routes */}
-              <Route
-                path="/create-post"
-                element={
-                  <ProtectedRoute>
-                    <CreatePost />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/edit-post/:id"
-                element={
-                  <ProtectedRoute>
-                    <EditPost />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/messages"
-                element={
-                  <ProtectedRoute>
-                    <Messages />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile/edit"
-                element={
-                  <ProtectedRoute>
-                    <EditProfile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/saved"
-                element={
-                  <ProtectedRoute>
-                    <SavedItems />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-posts"
-                element={
-                  <ProtectedRoute>
-                    <MyListings />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected Student Routes */}
+                <Route
+                  path="/create-post"
+                  element={
+                    <ProtectedRoute>
+                      <CreatePost />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/edit-post/:id"
+                  element={
+                    <ProtectedRoute>
+                      <EditPost />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/messages"
+                  element={
+                    <ProtectedRoute>
+                      <Messages />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/edit"
+                  element={
+                    <ProtectedRoute>
+                      <EditProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/saved"
+                  element={
+                    <ProtectedRoute>
+                      <SavedItems />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-posts"
+                  element={
+                    <ProtectedRoute>
+                      <MyListings />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Admin Moderation Routes */}
-              <Route
-                path="/admin"
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/reports"
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                }
-              />
+                {/* Admin Moderation Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/reports"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
 
-              {/* 404 Catch-All */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
+                {/* 404 Catch-All */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </div>
       </BrowserRouter>
     </AuthProvider>

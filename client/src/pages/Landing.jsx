@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search,
-  Compass,
+  PackageSearch,
   ShoppingBag,
   Users,
-  Calendar,
+  CalendarDays,
   ShieldCheck,
   ArrowRight,
   Sparkles,
-  HelpCircle,
-  MessageSquare,
 } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
@@ -56,7 +54,7 @@ export const Landing = () => {
       {/* Hero Section */}
       <section
         style={{
-          background: 'linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%)',
+          background: 'linear-gradient(180deg, #ede8db 0%, #F4F0E6 100%)',
           padding: '4.5rem 0 3.5rem',
           borderBottom: '1px solid var(--border)',
         }}
@@ -69,26 +67,29 @@ export const Landing = () => {
               gap: '0.5rem',
               background: 'var(--bg-surface)',
               border: '1px solid var(--border)',
-              padding: '0.4rem 1rem',
+              padding: '0.35rem 0.9rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.825rem',
+              fontSize: '0.72rem',
               fontWeight: 700,
               color: 'var(--primary)',
               marginBottom: '1.5rem',
               boxShadow: 'var(--shadow-sm)',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
             }}
           >
-            <Sparkles size={16} />
-            <span>Dedicated Campus Utility for Apex Institute of Technology</span>
+            <Sparkles size={14} strokeWidth={1.8} aria-hidden="true" />
+            <span>Dedicated Campus Utility — Scaler School of Technology</span>
           </div>
 
           <h1
             style={{
-              fontSize: 'clamp(2.25rem, 5vw, 3.5rem)',
+              fontSize: 'clamp(2.1rem, 5vw, 3.2rem)',
               fontWeight: 800,
               letterSpacing: '-0.03em',
               lineHeight: 1.15,
-              color: 'var(--text-main)',
+              color: 'var(--forest)',
               marginBottom: '1.25rem',
             }}
           >
@@ -123,7 +124,7 @@ export const Landing = () => {
               margin: '0 auto 2.5rem',
             }}
           >
-            <Search size={22} color="var(--primary)" style={{ marginRight: '0.75rem', flexShrink: 0 }} />
+            <Search size={20} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.75rem', flexShrink: 0 }} aria-hidden="true" />
             <input
               type="text"
               placeholder="Search for lost items, books, hackathons, or study groups..."
@@ -168,14 +169,14 @@ export const Landing = () => {
                   width: '2.5rem',
                   height: '2.5rem',
                   borderRadius: 'var(--radius-md)',
-                  background: '#fee2e2',
-                  color: '#dc2626',
+                  background: 'var(--danger-light)',
+                  color: 'var(--danger)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <Search size={20} />
+                <PackageSearch size={20} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div>
                 <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>Lost & Found</h4>
@@ -199,14 +200,14 @@ export const Landing = () => {
                   width: '2.5rem',
                   height: '2.5rem',
                   borderRadius: 'var(--radius-md)',
-                  background: '#fef3c7',
-                  color: '#d97706',
+                  background: 'var(--warning-light)',
+                  color: 'var(--warning)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <ShoppingBag size={20} />
+                <ShoppingBag size={20} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div>
                 <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>Marketplace</h4>
@@ -230,14 +231,14 @@ export const Landing = () => {
                   width: '2.5rem',
                   height: '2.5rem',
                   borderRadius: 'var(--radius-md)',
-                  background: '#eef2ff',
-                  color: '#4f46e5',
+                  background: 'var(--forest-light)',
+                  color: 'var(--forest)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <Users size={20} />
+                <Users size={20} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div>
                 <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>Collaborate</h4>
@@ -261,14 +262,14 @@ export const Landing = () => {
                   width: '2.5rem',
                   height: '2.5rem',
                   borderRadius: 'var(--radius-md)',
-                  background: '#ecfdf5',
-                  color: '#059669',
+                  background: 'var(--success-light)',
+                  color: 'var(--success)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <Calendar size={20} />
+                <CalendarDays size={20} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div>
                 <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>Campus Events</h4>
@@ -284,14 +285,12 @@ export const Landing = () => {
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem' }}>
             <div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Latest Updates
-              </span>
+              <span className="section-label">Latest Updates</span>
               <h2 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Recent Campus Listings</h2>
             </div>
             <Link to="/feed" className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <span>View All Listings</span>
-              <ArrowRight size={15} />
+              <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
             </Link>
           </div>
 
@@ -312,18 +311,16 @@ export const Landing = () => {
       </section>
 
       {/* Upcoming Events Section */}
-      <section style={{ padding: '4rem 0', background: 'var(--bg-subtle)', borderTop: '1px solid var(--border)' }}>
+      <section style={{ padding: '4rem 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border)' }}>
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '2rem' }}>
             <div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Official Campus Calendar
-              </span>
+              <span className="section-label">Official Campus Calendar</span>
               <h2 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Upcoming Events & Notices</h2>
             </div>
             <Link to="/events" className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <span>Browse All Events</span>
-              <ArrowRight size={15} />
+              <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
             </Link>
           </div>
 
@@ -357,9 +354,9 @@ export const Landing = () => {
             <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
               <div
                 style={{
-                  width: '3.5rem',
-                  height: '3.5rem',
-                  borderRadius: '9999px',
+                  width: '3rem',
+                  height: '3rem',
+                  borderRadius: '50%',
                   background: 'var(--primary-light)',
                   color: 'var(--primary)',
                   display: 'flex',
@@ -367,7 +364,9 @@ export const Landing = () => {
                   justifyContent: 'center',
                   margin: '0 auto 1.25rem',
                   fontWeight: 800,
-                  fontSize: '1.25rem',
+                  fontSize: '1.1rem',
+                  fontFamily: 'var(--font-mono)',
+                  border: '1px solid #e8c8bc',
                 }}
               >
                 1
@@ -376,24 +375,26 @@ export const Landing = () => {
                 Verify College Identity
               </h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                Sign up with your verified <code>@campus.edu</code> email. Only bona fide campus members can publish listings or send messages.
+                Sign up with your email. All bona fide campus members can publish listings, collaborate on projects, and send messages.
               </p>
             </div>
 
             <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
               <div
                 style={{
-                  width: '3.5rem',
-                  height: '3.5rem',
-                  borderRadius: '9999px',
-                  background: 'var(--accent-light)',
-                  color: 'var(--accent)',
+                  width: '3rem',
+                  height: '3rem',
+                  borderRadius: '50%',
+                  background: 'var(--warning-light)',
+                  color: 'var(--warning)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   margin: '0 auto 1.25rem',
                   fontWeight: 800,
-                  fontSize: '1.25rem',
+                  fontSize: '1.1rem',
+                  fontFamily: 'var(--font-mono)',
+                  border: '1px solid #e8d5a0',
                 }}
               >
                 2
@@ -409,9 +410,9 @@ export const Landing = () => {
             <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
               <div
                 style={{
-                  width: '3.5rem',
-                  height: '3.5rem',
-                  borderRadius: '9999px',
+                  width: '3rem',
+                  height: '3rem',
+                  borderRadius: '50%',
                   background: 'var(--success-light)',
                   color: 'var(--success)',
                   display: 'flex',
@@ -419,7 +420,9 @@ export const Landing = () => {
                   justifyContent: 'center',
                   margin: '0 auto 1.25rem',
                   fontWeight: 800,
-                  fontSize: '1.25rem',
+                  fontSize: '1.1rem',
+                  fontFamily: 'var(--font-mono)',
+                  border: '1px solid #b8d5c4',
                 }}
               >
                 3
@@ -440,7 +443,7 @@ export const Landing = () => {
         <div className="container">
           <div
             style={{
-              background: 'linear-gradient(135deg, #4f46e5 0%, #312e81 100%)',
+              background: 'var(--forest)',
               borderRadius: 'var(--radius-xl)',
               padding: '3rem 2.5rem',
               color: '#ffffff',
@@ -450,25 +453,26 @@ export const Landing = () => {
               justifyContent: 'space-between',
               gap: '2rem',
               boxShadow: 'var(--shadow-xl)',
+              border: '1px solid rgba(255,255,255,0.06)',
             }}
           >
             <div style={{ maxWidth: '600px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: '#a5b4fc', fontWeight: 700, fontSize: '0.85rem' }}>
-                <ShieldCheck size={20} />
-                <span>SAFETY FIRST COMMUNITY</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                <ShieldCheck size={16} strokeWidth={1.8} style={{ color: 'var(--primary)' }} aria-hidden="true" />
+                <span>Safety-First Community</span>
               </div>
-              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.25 }}>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.25, color: '#ffffff' }}>
                 Ready to join your campus hub?
               </h3>
-              <p style={{ color: '#c7d2fe', fontSize: '1rem', lineHeight: 1.6 }}>
+              <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem', lineHeight: 1.65 }}>
                 Sign in with your student credentials or register your college account in less than 60 seconds.
               </p>
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <Link to="/register" className="btn btn-lg" style={{ background: '#ffffff', color: 'var(--primary)', fontWeight: 700 }}>
+              <Link to="/register" className="btn btn-primary btn-lg">
                 Get Started
               </Link>
-              <Link to="/login" className="btn btn-lg" style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.3)' }}>
+              <Link to="/login" className="btn btn-lg" style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
                 Sign In
               </Link>
             </div>

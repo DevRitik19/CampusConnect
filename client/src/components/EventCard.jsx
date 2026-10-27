@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, ExternalLink, Bookmark } from 'lucide-react';
+import { CalendarDays, MapPin, ExternalLink, Bookmark, Share2, Volume2 } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,6 +9,7 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
     initialSaved || user?.savedEvents?.some((id) => (typeof id === 'string' ? id : id?._id) === event._id)
   );
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const {
     _id,
@@ -26,6 +27,8 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
   const month = eventDate.toLocaleString('default', { month: 'short' }).toUpperCase();
   const day = eventDate.getDate();
   const time = eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const isAudioEvent = ['Cultural', 'Club Activity', 'Seminar'].includes(category);
 
   const handleToggleSave = async () => {
     if (!isAuthenticated) {
@@ -49,10 +52,22 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(window.location.origin + `/events#${_id}`);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (e) {
+      console.warn('Clipboard share failed', e);
+    }
+  };
+
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
       {/* Event Banner */}
-      <div style={{ position: 'relative', height: '170px', overflow: 'hidden', background: '#e2e8f0' }}>
+      <div style={{ position: 'relative', height: '170px', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
         <img
           src={
             imageUrl ||
@@ -78,8 +93,56 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
             minWidth: '50px',
           }}
         >
-          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--primary)' }}>{month}</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1 }}>{day}</div>
+          <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--primary)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>{month}</div>
+          <div style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--forest)', lineHeight: 1 }}>{day}</div>
+        </div>
+
+        {/* Top Right Action Buttons: Share & Save */}
+        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.4rem', zIndex: 3 }}>
+          <button
+            onClick={handleShare}
+            title={copied ? 'Link Copied!' : 'Share Event'}
+            aria-label={copied ? 'Event link copied' : 'Share event link'}
+            style={{
+              background: copied ? 'var(--forest)' : 'rgba(255, 255, 255, 0.9)',
+              color: copied ? '#fff' : 'var(--text-main)',
+              width: '2rem',
+              height: '2rem',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--shadow-sm)',
+              transition: 'all 0.2s',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <Share2 size={13} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+
+          <button
+            onClick={handleToggleSave}
+            disabled={saving}
+            title={isSaved ? 'Remove from Saved' : 'Save Event'}
+            aria-label={isSaved ? 'Remove from saved events' : 'Save event to bookmarks'}
+            style={{
+              background: isSaved ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
+              color: isSaved ? '#fff' : 'var(--text-main)',
+              width: '2rem',
+              height: '2rem',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--shadow-sm)',
+              transition: 'all 0.2s',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <Bookmark size={14} strokeWidth={1.8} fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
+          </button>
         </div>
 
         {/* Category tag */}
@@ -88,40 +151,22 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
             position: 'absolute',
             bottom: '0.75rem',
             right: '0.75rem',
-            background: 'rgba(15, 23, 42, 0.8)',
+            background: 'rgba(38, 53, 36, 0.75)',
             color: '#fff',
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            padding: '0.2rem 0.6rem',
+            fontSize: '0.72rem',
+            fontWeight: 600,
+            padding: '0.18rem 0.5rem',
             borderRadius: 'var(--radius-sm)',
-          }}
-        >
-          {category}
-        </div>
-
-        {/* Save button */}
-        <button
-          onClick={handleToggleSave}
-          disabled={saving}
-          title={isSaved ? 'Remove from Saved' : 'Save Event'}
-          style={{
-            position: 'absolute',
-            top: '0.75rem',
-            right: '0.75rem',
-            background: isSaved ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
-            color: isSaved ? '#fff' : 'var(--text-main)',
-            width: '2rem',
-            height: '2rem',
-            borderRadius: '9999px',
-            display: 'flex',
+            fontFamily: 'var(--font-mono)',
+            letterSpacing: '0.04em',
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: 'var(--shadow-sm)',
-            transition: 'all 0.2s',
+            gap: '0.3rem',
           }}
         >
-          <Bookmark size={15} fill={isSaved ? '#fff' : 'none'} />
-        </button>
+          {isAudioEvent && <Volume2 size={12} strokeWidth={1.8} aria-hidden="true" />}
+          <span>{category}</span>
+        </div>
       </div>
 
       {/* Content */}
@@ -156,13 +201,13 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
         {/* Meta details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Calendar size={14} color="var(--primary)" />
+            <CalendarDays size={13} strokeWidth={1.8} color="var(--primary)" aria-hidden="true" />
             <span>
               {eventDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at {time}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <MapPin size={14} color="var(--accent)" />
+            <MapPin size={13} strokeWidth={1.8} color="var(--text-muted)" aria-hidden="true" />
             <span>{venue}</span>
           </div>
         </div>
@@ -178,7 +223,7 @@ export const EventCard = ({ event, onSaveChange, initialSaved = false }) => {
               style={{ width: '100%' }}
             >
               <span>Register Now</span>
-              <ExternalLink size={14} />
+              <ExternalLink size={14} strokeWidth={1.8} aria-hidden="true" />
             </a>
           ) : (
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>

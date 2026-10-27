@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingBag, PlusCircle, AlertCircle } from 'lucide-react';
+import { Search, ShoppingBag, Plus, SlidersHorizontal, CircleAlert } from 'lucide-react';
 import api from '../services/api';
 import { PostCard } from '../components/PostCard';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -51,38 +51,20 @@ export const Marketplace = () => {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3.5rem' }}>
       {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '2.5rem 2rem',
-          color: '#ffffff',
-          marginBottom: '2rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="page-hero">
         <div style={{ maxWidth: '640px' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#fef3c7', letterSpacing: '0.05em' }}>
-            Student Exchange
-          </span>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginTop: '0.25rem' }}>
-            Student Marketplace
-          </h1>
-          <p style={{ color: '#fffbeb', fontSize: '0.95rem', marginTop: '0.4rem', lineHeight: 1.5 }}>
+          <div className="page-hero-label">Student Exchange</div>
+          <h1>Student Marketplace</h1>
+          <p>
             Buy and sell pre-loved course textbooks, lab equipment, hostel desks, and calculators at student-friendly prices in Indian Rupees (₹).
           </p>
         </div>
 
         <Link
           to="/create-post?type=MARKETPLACE"
-          className="btn btn-lg"
-          style={{ background: '#ffffff', color: '#b45309', fontWeight: 700 }}
+          className="btn btn-primary btn-lg"
         >
-          <PlusCircle size={20} />
+          <Plus size={18} strokeWidth={2} aria-hidden="true" />
           <span>Sell an Item</span>
         </Link>
       </div>
@@ -102,7 +84,7 @@ export const Marketplace = () => {
           color: 'var(--text-muted)',
         }}
       >
-        <AlertCircle size={18} color="var(--accent)" style={{ flexShrink: 0 }} />
+        <CircleAlert size={18} strokeWidth={1.8} color="var(--primary)" style={{ flexShrink: 0 }} aria-hidden="true" />
         <span>
           <strong>Campus Exchange Policy:</strong> Transactions take place peer-to-peer. CampusConnect does not process online payments or take commissions. Always inspect items in person.
         </span>
@@ -121,7 +103,11 @@ export const Marketplace = () => {
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Categories */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 700, marginRight: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
+              <span>Category:</span>
+            </div>
             {categories.slice(0, 5).map((cat) => (
               <button
                 key={cat}
@@ -136,7 +122,7 @@ export const Marketplace = () => {
           {/* Search & Sort */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', border: '1px solid var(--border)' }}>
-              <Search size={16} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} />
+              <Search size={16} strokeWidth={1.8} color="var(--text-muted)" style={{ marginRight: '0.5rem' }} aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search items..."
@@ -150,6 +136,7 @@ export const Marketplace = () => {
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
               className="form-control"
+              aria-label="Sort marketplace items"
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
             >
               <option value="newest">Newest First</option>
@@ -171,6 +158,7 @@ export const Marketplace = () => {
         </div>
       ) : (
         <EmptyState
+          icon={ShoppingBag}
           title="No marketplace items listed"
           description="Be the first to list a used textbook, calculator, or hostel item for your campus peers."
           actionText="List an Item for Sale"
