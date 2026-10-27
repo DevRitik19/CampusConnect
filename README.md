@@ -364,3 +364,6 @@ CampusConnect/
 - **Email Service**: Verification emails currently default to active in development/demo mode. Production configuration supports pluggable SMTP or Resend/SendGrid providers.
 - **WebSocket Upgrade**: Real-time chat currently uses 5-second polling (per PRD instructions to ensure reliable deployment before considering Socket.IO).
 - **Persistent Image Hosting**: Post image inputs accept verified web URLs. Persistent Cloudinary upload integration is ready for environment variable attachment.
+
+
+**Video Link** https://drive.google.com/file/d/1QQW2IH9DUM3zPJecqg_KIv5Vc_T-FMfN/view?usp=drive_link
